@@ -12,21 +12,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace 解析几何
+namespace AnalyticGeometry
 {
     /// <summary>
-    /// 错误提示框.xaml 的交互逻辑
+    /// PromptMessageBox.xaml 的交互逻辑
     /// </summary>
-    public partial class 错误提示框 : Window
+    public partial class PromptMessageBox : Window
     {
-        public 错误提示框(string hint)
+        public PromptMessageBox(string text)
         {
             InitializeComponent();
-            tb.Text = hint;
-           
+            tbk.Text = text;
         }
-
-        private void close(object sender, RoutedEventArgs e)
+        
+        private void OKBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

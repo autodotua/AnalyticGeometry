@@ -1,9 +1,9 @@
-﻿<Application x:Class="解析几何.App"
+﻿<Application x:Class="AnalyticGeometry.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
 
-             StartupUri="解析几何图像.xaml">
+             StartupUri="AnalyticGeometryGraphs.xaml">
     <Application.Resources>
 
         <Style TargetType="Button">

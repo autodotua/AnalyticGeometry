@@ -1,7 +1,7 @@
-﻿<Window x:Class="解析几何.解方程"
+﻿<Window x:Class="AnalyticGeometry.SolveEquations"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="解方程" Height="299.713" Width="290.133"  WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+        Title="解方程" Height="299.713" Width="290.133"  WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" ResizeMode="NoResize" Loaded="WinLoadedEventHandler">
     <Grid Margin="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -28,10 +28,10 @@
                         <ColumnDefinition Width="4"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="input1" VerticalAlignment="Center"  />
+                    <TextBox x:Name="txtInputLeftPart" VerticalAlignment="Center"  />
                     <TextBlock FontSize="18" Grid.Column="1" >=</TextBlock>
-                    <TextBox x:Name="input2"  Grid.Column="2" VerticalAlignment="Center"  >0</TextBox>
-                    <Button Click="dichotomy" Grid.Column="4">求解</Button>
+                    <TextBox x:Name="txtInputRightPart"  Grid.Column="2" VerticalAlignment="Center"  >0</TextBox>
+                    <Button Click="SolveWithDichotomy" Grid.Column="4">求解</Button>
                 </Grid>
                 <Grid Grid.Row="2" >
                     <Grid.ColumnDefinitions>
@@ -44,11 +44,11 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock VerticalAlignment="Center" >初始区间： (</TextBlock>
-                    <TextBox x:Name="start" Grid.Column="1" Text="-100" VerticalAlignment="Center" />
+                    <TextBox x:Name="txtStart" Grid.Column="1" Text="-100" VerticalAlignment="Center" />
                     <TextBlock Grid.Column="2" >,</TextBlock>
-                    <TextBox x:Name="end" Grid.Column="3" Text="100" VerticalAlignment="Center" />
+                    <TextBox x:Name="txtEnd" Grid.Column="3" Text="100" VerticalAlignment="Center" />
                     <TextBlock Grid.Column="4" VerticalAlignment="Center" >)</TextBlock>
-                    <Button Grid.Column="6" >看图像确定范围</Button>
+                   
                 </Grid>
                 <Grid Grid.Row="4" >
                     <Grid.ColumnDefinitions>
@@ -60,11 +60,11 @@
                     </Grid.ColumnDefinitions>
                   
                     <TextBlock>目标误差： </TextBlock>
-                    <TextBox x:Name="accuracy" Grid.Column="1" Text="0.000001"/>
+                    <TextBox x:Name="txtAccuracy" Grid.Column="1" Text="0.000001"/>
                     <TextBlock Grid.Column="3" >变量标识符：</TextBlock>
-                    <TextBox x:Name="variable" Grid.Column="4">x</TextBox>
+                    <TextBox x:Name="txtVariable" Grid.Column="4">x</TextBox>
                 </Grid>
-                <TextBox x:Name="result" PreviewKeyDown="TextBoxPreviewKeyDown" Grid.Row="6" ></TextBox>
+                <TextBox x:Name="txtResult" PreviewKeyDown="DisableInputTxtPreviewKeyDownEventHandler" Grid.Row="6" ></TextBox>
             </Grid>
         </GroupBox>
         <GroupBox Header="一元二次方程"  Grid.Row="2">
@@ -90,13 +90,13 @@
                         <ColumnDefinition Width="*"/>
                         
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="ta" TextChanged="ta_TextChanged" />
+                    <TextBox x:Name="txtQuadraticA" TextChanged="QuadraticTxtTextChangedEventHandler" />
                     <TextBlock Grid.Column="1"> x² + </TextBlock>
-                    <TextBox x:Name="tb" Grid.Column="2" TextChanged="ta_TextChanged"/>
+                    <TextBox x:Name="txtQuadraticB" Grid.Column="2" TextChanged="QuadraticTxtTextChangedEventHandler"/>
                     <TextBlock Grid.Column="3"> x + </TextBlock>
-                    <TextBox x:Name="tc" Grid.Column="4" TextChanged="ta_TextChanged"/>
+                    <TextBox x:Name="txtQuadraticC" Grid.Column="4" TextChanged="QuadraticTxtTextChangedEventHandler"/>
                     <TextBlock Grid.Column="5"> = </TextBlock>
-                    <TextBox x:Name="tc2" Grid.Column="6" TextChanged="ta_TextChanged">0</TextBox>
+                    <TextBox x:Name="txtQuadraticD" Grid.Column="6" TextChanged="QuadraticTxtTextChangedEventHandler">0</TextBox>
                 </Grid>
                 <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
@@ -104,8 +104,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock VerticalAlignment="Center">x=</TextBlock>
-                    <TextBox x:Name="x" Grid.Column="1"  BorderBrush="White" TextAlignment="Center" PreviewKeyDown="TextBoxPreviewKeyDown"/>
-                    <TextBox x:Name="x_" Grid.Column="1" Background="#00000000" BorderBrush="White" TextAlignment="Center" IsHitTestVisible="False"  />
+                    <TextBox x:Name="txtQuadraticResultX" Grid.Column="1"  BorderBrush="White" TextAlignment="Center" PreviewKeyDown="DisableInputTxtPreviewKeyDownEventHandler"/>
+                    <TextBox x:Name="txtQuadraticFractionBar" Grid.Column="1" Background="#00000000" BorderBrush="White" TextAlignment="Center" IsHitTestVisible="False"  />
                 </Grid>
                 
                 <Grid Grid.Row="4">
@@ -114,7 +114,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock>x<Run BaselineAlignment="Subscript" FontSize="8">1</Run>=</TextBlock>
-                    <TextBox x:Name="x1" Grid.Column="1" BorderBrush="White" TextAlignment="Center" PreviewKeyDown="TextBoxPreviewKeyDown"/>
+                    <TextBox x:Name="txtQuadraticResultX1" Grid.Column="1" BorderBrush="White" TextAlignment="Center" PreviewKeyDown="DisableInputTxtPreviewKeyDownEventHandler"/>
                 </Grid>
 
                 <Grid Grid.Row="6">
@@ -123,7 +123,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock>x<Run BaselineAlignment="Subscript" FontSize="8">2</Run>=</TextBlock>
-                    <TextBox x:Name="x2" Grid.Column="1" BorderBrush="White" TextAlignment="Center" PreviewKeyDown="TextBoxPreviewKeyDown"/>
+                    <TextBox x:Name="txtQuadraticResultX2" Grid.Column="1" BorderBrush="White" TextAlignment="Center" PreviewKeyDown="DisableInputTxtPreviewKeyDownEventHandler"/>
                 </Grid>
             </Grid>
             

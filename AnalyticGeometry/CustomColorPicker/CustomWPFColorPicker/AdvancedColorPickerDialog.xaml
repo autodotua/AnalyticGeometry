@@ -660,8 +660,8 @@
                                         <StackPanel Orientation="Horizontal" Height="62">
                                             <Border x:Name="currentColorBorder" HorizontalAlignment="Left" Margin="10,0,25,0" VerticalAlignment="Bottom" Width="82" Height="50" BorderThickness="0" BorderBrush="Black" Background="#FF808080"/>
                                             <StackPanel Orientation="Vertical" Width="90">
-                                                <Button x:Name="OK" HorizontalAlignment="Right" Margin="20,10,0,0" VerticalAlignment="Bottom" Width="70" Height="23" Content="Ok" Click="Ok_Click" Template="{DynamicResource normalButton}" />
-                                                <Button x:Name="Cancel" HorizontalAlignment="Right" Margin="20,5,0,0" VerticalAlignment="Bottom" Width="70" Height="23" Content="Cancel" Click="Cancel_Click" Template="{DynamicResource normalButton}"/>
+                                                <Button x:Name="OK" HorizontalAlignment="Right" Margin="20,10,0,0" VerticalAlignment="Bottom" Width="70" Height="23" Content="确认" Click="Ok_Click" Template="{DynamicResource normalButton}"/>
+                                                <Button x:Name="Cancel" HorizontalAlignment="Right" Margin="20,5,0,0" VerticalAlignment="Bottom" Width="70" Height="23" Content="取消" Click="Cancel_Click" Template="{DynamicResource normalButton}"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>

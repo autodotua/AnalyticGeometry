@@ -1,7 +1,7 @@
-﻿<Window x:Class="解析几何.提示框"
+﻿<Window x:Class="AnalyticGeometry.PromptMessageBox"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="提示框" Height="Auto" Width="Auto" WindowStyle="None" BorderThickness="0"  AllowsTransparency="True" Background="#FFB3FFB6" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
+        Title="提示框" Height="Auto" Width="Auto" WindowStyle="None" BorderThickness="0"  AllowsTransparency="True" Background="#FFB3FFB6" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" ShowInTaskbar="False">
 
 
     
@@ -20,7 +20,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="16"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" FontSize="16"  x:Name="tb">出现错误！错误原因：wtf</TextBlock>
-        <Button Grid.Row="3" Grid.Column="2" Width="60" Click="close" FontSize="16">确定</Button>
+        <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" FontSize="16"  x:Name="tbk">出现错误！错误原因：wtf</TextBlock>
+        <Button Grid.Row="3" Grid.Column="2" Width="60" Click="OKBtnClickEventHandler" FontSize="16">确定</Button>
     </Grid>
 </Window>

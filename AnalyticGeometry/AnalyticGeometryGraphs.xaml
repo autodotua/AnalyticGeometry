@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns:CustomWPFColorPicker="clr-namespace:CustomWPFColorPicker;assembly=CustomWPFColorPicker"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="解析几何.解析几何图像"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="AnalyticGeometry.AnalyticGeometryGraphs"
       Title="解析几何图像" Height="730" Width="960"
     PreviewMouseDown="WinPreviewMouseDownEventHandler"  
     PreviewMouseWheel="WinMouseWheelEventHandler" 
@@ -41,7 +41,7 @@
                     <RowDefinition Height="8"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TabControl x:Name="tabInput" BorderThickness="0" Height="164" >
+                <TabControl x:Name="tabInput" BorderThickness="0"  >
                     <TabItem Header="函数"  >
                         <Grid Background="#FFFFFFFF">
                             <Grid.RowDefinitions>
@@ -61,10 +61,10 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="y="/>
-                            <TextBox x:Name="txtFunctionInput" Grid.Column="2" PreviewKeyDown="FunctionOKBtnPreviewKeyDownEventHandler" VerticalAlignment="Center"></TextBox>
+                            <TextBox x:Name="txtFunctionInput" Grid.Column="2" PreviewKeyDown="FunctionOKBtnPreviewKeyDownEventHandler" VerticalAlignment="Center" AcceptsReturn="True"></TextBox>
                             <Button Click="FunctionOKBtnClickEventHandler" x:Name="btnFunctionOK" Grid.Column="4"  Content="确定"/>
                             <TextBlock Text="绘制精度：" Grid.ColumnSpan="3" Grid.Row="2"/>
-                            <TextBox x:Name="txtFunctionPrecision" Grid.Column="4" Grid.Row="2" Text="8" TextChanged="UniversalTxtEnterOnlyIntegerTextChangedEventHandler"></TextBox>
+                            <TextBox x:Name="txtFunctionPrecision" Grid.Column="4" Grid.Row="2" Text="10" TextChanged="UniversalTxtEnterOnlyIntegerTextChangedEventHandler"></TextBox>
                             <TextBlock Grid.Row="3" Foreground="Gray" Grid.ColumnSpan="3">值低精度高值高速度快<LineBreak/>大导函数图像请降低值</TextBlock>
                             <TextBlock Grid.ColumnSpan="3" Grid.Row="5">变量标识符：</TextBlock>
                             <TextBox x:Name="txtFunctionVariable" Grid.Column="4" Grid.Row="5" Text="x" TextChanged="UniversalTxtEnterNoNumberTextChangedEventHandler" ></TextBox>
@@ -164,12 +164,12 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Button Content="保存"  Click="SaveGraphAsFiles"/>
-                            <Button  Content="清空" Grid.Column="6" Click="ClearAllGraphes" />
+                            <Button  Content="清空" Grid.Column="6" Click="ClearAllGraphs" />
                             <TextBox x:Name="txtCanvasTop" Grid.Column="3" Text="10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler" MaxWidth="40" />
                             <TextBox x:Name="txtCanvasLeft" Grid.Row="3" Text="-10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  MaxWidth="40" Width="40"/>
                             <TextBox x:Name="txtCanvasBottom" MinWidth="28" Grid.Row="6" Grid.Column="3" Text="-10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  MaxWidth="40"/>
                             <TextBox x:Name="txtCanvasRight" Grid.Row="3" Grid.Column="6" Text="10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  MaxWidth="40" Width="40"/>
-                            <CheckBox x:Name="chkAutoClear" Grid.Row="6" Grid.Column="4" HorizontalAlignment="Right"  Grid.ColumnSpan="3" IsChecked="True"   >自动清除</CheckBox>
+                            <CheckBox x:Name="chkMultipleFunction" Grid.Row="6" Grid.Column="4" HorizontalAlignment="Right"  Grid.ColumnSpan="3" IsChecked="False"   >多重图像</CheckBox>
                             <Grid Grid.Row="2" Grid.RowSpan="3" Grid.Column="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -288,7 +288,7 @@
                             </Grid.RowDefinitions>
                             <CheckBox x:Name="chkShowGrid" IsChecked="True"  >显示网格</CheckBox>
                             <CheckBox x:Name="chkDrawGridAutomatically" Grid.Row="2" IsChecked="True" >自动网格</CheckBox>
-                            <Button Click="setSquareGrid" Grid.Row="4">方形网格</Button>
+                            <Button Click="MakeGridSquare" Grid.Row="4">方形网格</Button>
                         </Grid>
                     </Grid>
                 </GroupBox>
@@ -315,16 +315,30 @@
                         <CustomWPFColorPicker:ColorPickerControlView x:Name="colorPicker" Grid.Column="2" Grid.Row="3" CurrentColor="Red" />
                     </Grid>
                 </GroupBox>
-                <Button Click="DelRegeditItems" Grid.Row="10">恢复初始化</Button>
+                <Grid Grid.Row="10">
+                    
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/> 
+                   <ColumnDefinition Width="4"/> 
+                         <ColumnDefinition Width="*"/> 
+                   <ColumnDefinition Width="4"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Click="DelRegeditItems">恢复初始化</Button>
+                    <Button Click="OpenSolveEquationsBtnClickEventHandler" Grid.Column="2">解方程</Button>
+                    <Button Click="OpenOrdinaryCalculatorBtnClickEventHandler" Grid.Column="4">普通计算器</Button>
+
+                </Grid>
+               
             </Grid>
         </Grid>
 
-        <ZoomableCanvas    x:Name="cvsMainCanvas" Grid.Column="1" Panel.ZIndex="-1"    IsManipulationEnabled="True" >
+        <Canvas    x:Name="cvsMainCanvas" Grid.Column="1" Panel.ZIndex="-1"    IsManipulationEnabled="True" >
 
             <!--<ZoomableCanvas.RenderTransform>
                 <MatrixTransform/>
             </ZoomableCanvas.RenderTransform>-->
-        </ZoomableCanvas>
+        </Canvas>
 
     </Grid>
 </Window>
