@@ -33,7 +33,7 @@ namespace 解析几何
     /// </summary>
     public partial class 解析几何图像 : Window
     {
-        string equation, equation1, equation2;
+        string functionEquation, ParametricXEquation, ParametricYEquation;
         CustomCoordinate cc;
         PresentationSource ps;
         public 解析几何图像()
@@ -48,7 +48,7 @@ namespace 解析几何
 
 
 
-        private void btnClickEventHandlerSaveGraph(object sender, EventArgs e)
+        private void SaveGraphBtnClickEventHandler(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "透明图片png|*.png";
@@ -58,24 +58,24 @@ namespace 解析几何
 
         }
 
-        private void initialize()
+        private void Initialize()
         {
             cc = new CustomCoordinate(grdMain.ColumnDefinitions[1].ActualWidth, grdMain.ActualHeight, double.Parse(txtCanvasLeft.Text), double.Parse(txtCanvasRight.Text), double.Parse(txtCanvasTop.Text), double.Parse(txtCanvasBottom.Text));
-            refreshGrid();
+            RefreshCoordinateGrid();
             if (chkAutoClear.IsChecked == true)
             {
-                clearCv();
+                ClearAllGraphes();
             }
-            drawCoordinate();
+            DrawCoordinate();
         }
 
-        private void clearCv()
+        private void ClearAllGraphes()
         {
             cvsMainCanvas.Children.Clear();
         }
 
 
-        private void showErrorMessage(string text)
+        private void ShowErrorMessage(string text)
         {
             new 错误提示框(text).ShowDialog();
         }
@@ -84,11 +84,11 @@ namespace 解析几何
 
         #region 绘制
 
-        private void drawCoordinate()
+        private void DrawCoordinate()
         {
             //double  pointWidth=
-            drawLine(Brushes.Black, 1.5, -cvsMainCanvas.ActualWidth, cc.toScreenXAxis(), 2 * cvsMainCanvas.ActualWidth, cc.toScreenXAxis());//X
-            drawLine(Brushes.Black, 1.5, cc.toScreenYAxis(), -cvsMainCanvas.ActualHeight, cc.toScreenYAxis(), 2 * cvsMainCanvas.ActualHeight);//Y
+            DrawLine(Brushes.Black, 1.5, -cvsMainCanvas.ActualWidth, cc.toScreenXAxis(), 2 * cvsMainCanvas.ActualWidth, cc.toScreenXAxis());//X
+            DrawLine(Brushes.Black, 1.5, cc.toScreenYAxis(), -cvsMainCanvas.ActualHeight, cc.toScreenYAxis(), 2 * cvsMainCanvas.ActualHeight);//Y
             List<TextBlock> tbList = new System.Collections.Generic.List<TextBlock>();
             if (chkShowGrid.IsChecked == true)
             {
@@ -99,7 +99,7 @@ namespace 解析几何
                 {
                     if (Math.Round(i, 5) != 0)
                     {
-                        drawLine(Brushes.Gray, 1, cc.toScreenX(i), -cvsMainCanvas.ActualHeight, cc.toScreenX(i), 2 * cvsMainCanvas.ActualHeight);
+                        DrawLine(Brushes.Gray, 1, cc.toScreenX(i), -cvsMainCanvas.ActualHeight, cc.toScreenX(i), 2 * cvsMainCanvas.ActualHeight);
                         tbList.Add(new TextBlock());
                         tbList[tbList.Count - 1].Text = Math.Round(i, 5).ToString();
                         tbList[tbList.Count - 1].Margin = new Thickness(cc.toScreenX(i), cc.toScreenXAxis() - 15, 0, 0);
@@ -114,7 +114,7 @@ namespace 解析几何
                 {
                     if (Math.Round(i, 5) != 0)
                     {
-                        drawLine(Brushes.Gray, 1, -cvsMainCanvas.ActualWidth, cc.toScreenY(i), 2 * cvsMainCanvas.ActualWidth, cc.toScreenY(i));
+                        DrawLine(Brushes.Gray, 1, -cvsMainCanvas.ActualWidth, cc.toScreenY(i), 2 * cvsMainCanvas.ActualWidth, cc.toScreenY(i));
                         tbList.Add(new TextBlock());
                         tbList[tbList.Count - 1].Text = Math.Round(i, 5).ToString();
                         tbList[tbList.Count - 1].Margin = new Thickness(cc.toScreenYAxis() + 6, cc.toScreenY(i), 0, 0);
@@ -159,7 +159,7 @@ namespace 解析几何
 
         }
 
-        private void draw()
+        private void Draw()
         {
             if (tabInput.SelectedIndex == 0)
             {
@@ -170,7 +170,7 @@ namespace 解析几何
                 btnParametricOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
-        private void drawLine(double x1, double y1, double x2, double y2)
+        private void DrawLine(double x1, double y1, double x2, double y2)
         {
             System.Windows.Shapes.Line l = new Line();
             l.Stroke = colorPicker.CurrentColor;
@@ -181,7 +181,7 @@ namespace 解析几何
             l.Y2 = y2;
             cvsMainCanvas.Children.Add(l);
         }
-        private void drawLine(Point p1, Point p2)
+        private void DrawLine(Point p1, Point p2)
         {
             System.Windows.Shapes.Line l = new Line();
             l.Stroke = colorPicker.CurrentColor;
@@ -192,7 +192,7 @@ namespace 解析几何
             l.Y2 = p2.Y;
             cvsMainCanvas.Children.Add(l);
         }
-        private void drawLine(SolidColorBrush brush, double tn, double x1, double y1, double x2, double y2)
+        private void DrawLine(SolidColorBrush brush, double tn, double x1, double y1, double x2, double y2)
         {
             System.Windows.Shapes.Line l = new Line();
             l.Stroke = brush;
@@ -203,7 +203,7 @@ namespace 解析几何
             l.Y2 = y2;
             cvsMainCanvas.Children.Add(l);
         }
-        private void drawCricle(double x, double y)
+        private void DrawCricle(double x, double y)
         {
             System.Windows.Shapes.Ellipse e = new Ellipse();
             e.Stroke = colorPicker.CurrentColor;
@@ -214,15 +214,15 @@ namespace 解析几何
         #endregion
 
         #region 函数
-        private void btnClickEventHandlerFunctionOK(object sender, EventArgs e)
+        private void FunctionOKBtnClickEventHandler(object sender, EventArgs e)
         {
 
             colorPicker.BorderBrush = Brushes.Red;
-            initialize();
-            equation = Calculate.replace1(txtFunctionInput.Text, txtFunctionVariable.Text);
+            Initialize();
+            functionEquation = Calculate.replace1(txtFunctionInput.Text, txtFunctionVariable.Text);
             try
             {
-                funcmain();
+                DrawFunctionGraph();
 
             }
             catch
@@ -230,7 +230,7 @@ namespace 解析几何
             }
         }
 
-        private void funcmain()
+        private void DrawFunctionGraph()
         {
             double pre = (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / cvsMainCanvas.ActualWidth * double.Parse(txtFunctionPrecision.Text);
             List<double> xarray = new List<double>();
@@ -242,7 +242,7 @@ namespace 解析几何
             {
                 points.Add(new Point(
                     cc.toScreenX(i),
-                    cc.toScreenY(double.Parse(Calculate.eval(equation, txtFunctionVariable.Text, i.ToString())))));
+                    cc.toScreenY(double.Parse(Calculate.eval(functionEquation, txtFunctionVariable.Text, i.ToString())))));
             }
             if (rbtnGraphTypeOfLine.IsChecked == true)
             {
@@ -250,25 +250,25 @@ namespace 解析几何
                 {
                     if (points[i - 1].Y >= -100 && points[i].Y <= cvsMainCanvas.ActualHeight + 100 && points[i - 1].Y <= cvsMainCanvas.ActualHeight + 100 && points[i].Y >= -100)
                     {
-                        drawLine(points[i - 1].X, points[i - 1].Y, points[i].X, points[i].Y);
+                        DrawLine(points[i - 1].X, points[i - 1].Y, points[i].X, points[i].Y);
                     }
 
                     else if (points[i - 1].Y < cvsMainCanvas.ActualHeight && points[i - 1].Y > 0 && points[i].Y <= 0)
                     {
-                        drawLine(points[i - 1].X, points[i - 1].Y, points[i - 1].X, 0);
+                        DrawLine(points[i - 1].X, points[i - 1].Y, points[i - 1].X, 0);
                     }
                     else if (points[i - 1].Y <= 0 && points[i].Y > 0 && points[i].Y < cvsMainCanvas.ActualHeight)
                     {
-                        drawLine(points[i].X, 0, points[i].X, points[i].Y);
+                        DrawLine(points[i].X, 0, points[i].X, points[i].Y);
                     }
 
                     else if (points[i - 1].Y < cvsMainCanvas.ActualHeight && points[i - 1].Y > 0 && points[i].Y > cvsMainCanvas.ActualHeight)
                     {
-                        drawLine(points[i - 1].X, points[i - 1].Y, points[i - 1].X, cvsMainCanvas.Height);
+                        DrawLine(points[i - 1].X, points[i - 1].Y, points[i - 1].X, cvsMainCanvas.Height);
                     }
                     else if (points[i - 1].Y > cvsMainCanvas.ActualHeight && points[i].Y > 0 && points[i].Y < cvsMainCanvas.ActualHeight)
                     {
-                        drawLine(points[i].X, cvsMainCanvas.Height, points[i].X, points[i].Y);
+                        DrawLine(points[i].X, cvsMainCanvas.Height, points[i].X, points[i].Y);
                     }
 
                 }
@@ -281,7 +281,7 @@ namespace 解析几何
                 {
                     try
                     {
-                        drawCricle(points[i].X, points[i].Y);
+                        DrawCricle(points[i].X, points[i].Y);
                     }
                     catch (Exception)
                     {
@@ -294,28 +294,28 @@ namespace 解析几何
         #endregion
 
         #region 参数方程
-        private void ok2Click(object sender, EventArgs e)
+        private void ParametricOKBtnClickEventHandler(object sender, EventArgs e)
         {
-            initialize();
-            equation1 = Calculate.replace1(txtParametricX.Text, txtParametricParameter.Text);
-            equation2 = Calculate.replace1(txtParametricY.Text, txtParametricParameter.Text);
+            Initialize();
+            ParametricXEquation = Calculate.replace1(txtParametricX.Text, txtParametricParameter.Text);
+            ParametricYEquation = Calculate.replace1(txtParametricY.Text, txtParametricParameter.Text);
             try
             {
-                paramain();
+                DrawParametricGraph();
             }
             catch { }
 
         }
 
-        private void paramain()
+        private void DrawParametricGraph()
         {
             Pen p = new Pen(colorPicker.CurrentColor, int.Parse(txtLineThickness.Text));
             List<Point> points = new List<Point>();
             for (double i = double.Parse(txtParametricEnd.Text); i <= double.Parse(txtParametricEnd.Text); i += double.Parse(txtParametricPrecision.Text))
             {
                 points.Add(new Point(
-                    cc.toScreenX(double.Parse(Calculate.eval(equation1, txtParametricParameter.Text, i.ToString()))),
-                    cc.toScreenY(double.Parse(Calculate.eval(equation2, txtParametricParameter.Text, i.ToString())))));
+                    cc.toScreenX(double.Parse(Calculate.eval(ParametricXEquation, txtParametricParameter.Text, i.ToString()))),
+                    cc.toScreenY(double.Parse(Calculate.eval(ParametricYEquation, txtParametricParameter.Text, i.ToString())))));
             }
             if (rbtnGraphTypeOfLine.IsChecked == true)
             {
@@ -323,7 +323,7 @@ namespace 解析几何
                 {
                     if (points[i - 1].Y >= -100 && points[i].Y <= cvsMainCanvas.ActualHeight + 100 && points[i - 1].Y <= cvsMainCanvas.ActualHeight + 100 && points[i].Y >= -100)
                     {
-                        drawLine(points[i - 1].X, points[i - 1].Y, points[i].X, points[i].Y);
+                        DrawLine(points[i - 1].X, points[i - 1].Y, points[i].X, points[i].Y);
                     }
                 }
             }
@@ -331,7 +331,7 @@ namespace 解析几何
             {
                 for (int i = 0; i < points.Count; i++)
                 {
-                    drawCricle(points[i].X, points[i].Y);
+                    DrawCricle(points[i].X, points[i].Y);
                 }
             }
 
@@ -340,7 +340,7 @@ namespace 解析几何
 
         #region 限制操作
         Dictionary<TextBox, string> lastString = new Dictionary<TextBox, string>();
-        private void onlyNum(object sender, TextChangedEventArgs e)
+        private void UniversalTxtEnterOnlyNumberTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
             double trynum;
             if (((TextBox)sender).Text != "")
@@ -365,7 +365,7 @@ namespace 解析几何
             }
         }
 
-        private void onlyPlusNum(object sender, TextChangedEventArgs e)
+        private void UniversalTxtEnterOnlyPositiveNumberTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
             double trynum;
             if (((TextBox)sender).Text != "")
@@ -394,7 +394,7 @@ namespace 解析几何
             }
         }
 
-        private void onlyPlusInt(object sender, TextChangedEventArgs e)
+        private void UniversalTxtEnterOnlyIntegerTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
             if (((TextBox)sender).Text != "")
             {
@@ -423,7 +423,7 @@ namespace 解析几何
             }
         }
 
-        private void disabledNum(object sender, TextChangedEventArgs e)
+        private void UniversalTxtEnterNoNumberTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
             for (int i = 0; i <= 9; i++)
             {
@@ -438,7 +438,7 @@ namespace 解析几何
         #endregion
 
         #region 键盘操作
-        private void input1Key(object sender, KeyEventArgs e)
+        private void FunctionOKBtnPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
         {
 
             if (e.Key == Key.Space)
@@ -451,7 +451,7 @@ namespace 解析几何
             }
         }
 
-        private void paraxKey(object sender, KeyEventArgs e)
+        private void TxtParametricXBtnPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
             {
@@ -463,7 +463,7 @@ namespace 解析几何
             }
         }
 
-        private void parayKey(object sender, KeyEventArgs e)
+        private void TxtParametricYBtnPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
             {
@@ -478,7 +478,7 @@ namespace 解析几何
         #endregion
 
         #region 配置项
-        private string getConfig(string key)
+        private string GetConfig(string key)
         {
             RegistryKey rk = Registry.CurrentUser.CreateSubKey("software\\fz\\mathtools");
             try
@@ -492,7 +492,7 @@ namespace 解析几何
 
         }
 
-        private void setConfig(string key, string value)
+        private void SetConfig(string key, string value)
         {
             RegistryKey rk = Registry.CurrentUser.CreateSubKey("software\\fz\\mathtools");
             try
@@ -505,96 +505,96 @@ namespace 解析几何
             }
         }
 
-        private void opening(object sender, EventArgs e)
+        private void WinLoadedEventHandler(object sender, EventArgs e)
         {
             txtFunctionInput.Focus();
             ps = PresentationSource.FromVisual(this);
-            if (getConfig("opened") == "1")
+            if (GetConfig("opened") == "1")
             {
 
-                txtGraphColor.Text = getConfig("color") == null ? "#FFFF0000" : getConfig("color");
-                txtFunctionPrecision.Text = getConfig("precision");
-                txtFunctionVariable.Text = getConfig("variable") == null ? "x" : getConfig("variable");
-                txtCanvasTop.Text = getConfig("t");
-                txtCanvasLeft.Text = getConfig("l");
-                txtCanvasRight.Text = getConfig("r");
-                txtCanvasBottom.Text = getConfig("b");
-                txtVerticalSeparationDistance.Text = getConfig("txtVerticalSeparationDistance");
-                txtHorizontalSeparationDistance.Text = getConfig("txtHorizontalSeparationDistance");
-                txtLineThickness.Text = getConfig("thickness");
-                txtParametricParameter.Text = getConfig("parap") == null ? "t" : getConfig("parap");
-                txtParametricStart.Text = getConfig("paral");
-                txtParametricEnd.Text = getConfig("parar");
-                txtParametricPrecision.Text = getConfig("parapre");
+                txtGraphColor.Text = GetConfig("color") == null ? "#FFFF0000" : GetConfig("color");
+                txtFunctionPrecision.Text = GetConfig("precision");
+                txtFunctionVariable.Text = GetConfig("variable") == null ? "x" : GetConfig("variable");
+                txtCanvasTop.Text = GetConfig("t");
+                txtCanvasLeft.Text = GetConfig("l");
+                txtCanvasRight.Text = GetConfig("r");
+                txtCanvasBottom.Text = GetConfig("b");
+                txtVerticalSeparationDistance.Text = GetConfig("txtVerticalSeparationDistance");
+                txtHorizontalSeparationDistance.Text = GetConfig("txtHorizontalSeparationDistance");
+                txtLineThickness.Text = GetConfig("thickness");
+                txtParametricParameter.Text = GetConfig("parap") == null ? "t" : GetConfig("parap");
+                txtParametricStart.Text = GetConfig("paral");
+                txtParametricEnd.Text = GetConfig("parar");
+                txtParametricPrecision.Text = GetConfig("parapre");
 
-                switch (getConfig("chkAutoClear"))
+                switch (GetConfig("chkAutoClear"))
                 {
                     case "true": chkAutoClear.IsChecked = true; break;
                     case "false": chkAutoClear.IsChecked = false; break;
                 }
 
-                switch (getConfig("chkDrawGridAutomatically"))
+                switch (GetConfig("chkDrawGridAutomatically"))
                 {
                     case "true": chkDrawGridAutomatically.IsChecked = true; break;
                     case "false": chkDrawGridAutomatically.IsChecked = false; break;
                 }
-                switch (getConfig("chkShowGrid"))
+                switch (GetConfig("chkShowGrid"))
                 {
                     case "true": chkShowGrid.IsChecked = true; break;
                     case "false": chkShowGrid.IsChecked = false; break;
                 }
-                if (getConfig("drawType") == "2")
+                if (GetConfig("drawType") == "2")
                 {
                     rbtnGraphTypeOfPoint.IsChecked = true;
                 }
             }
-            draw();
+            Draw();
         }
 
-        private void closing(object sender, CancelEventArgs e)
+        private void WinClosingEventHandler(object sender, CancelEventArgs e)
         {
-            setConfig("color", txtGraphColor.Text);
-            setConfig("precision", txtFunctionPrecision.Text);
-            setConfig("variable", txtFunctionVariable.Text);
-            setConfig("t", txtCanvasTop.Text);
-            setConfig("l", txtCanvasLeft.Text);
-            setConfig("r", txtCanvasRight.Text);
-            setConfig("b", txtCanvasBottom.Text);
-            setConfig("txtVerticalSeparationDistance", txtVerticalSeparationDistance.Text);
-            setConfig("txtHorizontalSeparationDistance", txtHorizontalSeparationDistance.Text);
-            setConfig("thickness", txtLineThickness.Text);
-            setConfig("parap", txtParametricParameter.Text);
-            setConfig("paral", txtParametricParameter.Text);
-            setConfig("parar", txtParametricEnd.Text);
-            setConfig("parapre", txtParametricPrecision.Text);
+            SetConfig("color", txtGraphColor.Text);
+            SetConfig("precision", txtFunctionPrecision.Text);
+            SetConfig("variable", txtFunctionVariable.Text);
+            SetConfig("t", txtCanvasTop.Text);
+            SetConfig("l", txtCanvasLeft.Text);
+            SetConfig("r", txtCanvasRight.Text);
+            SetConfig("b", txtCanvasBottom.Text);
+            SetConfig("txtVerticalSeparationDistance", txtVerticalSeparationDistance.Text);
+            SetConfig("txtHorizontalSeparationDistance", txtHorizontalSeparationDistance.Text);
+            SetConfig("thickness", txtLineThickness.Text);
+            SetConfig("parap", txtParametricParameter.Text);
+            SetConfig("paral", txtParametricParameter.Text);
+            SetConfig("parar", txtParametricEnd.Text);
+            SetConfig("parapre", txtParametricPrecision.Text);
             switch (chkAutoClear.IsChecked)
             {
-                case true: setConfig("chkAutoClear", "true"); break;
-                case false: setConfig("chkAutoClear", "false"); break;
+                case true: SetConfig("chkAutoClear", "true"); break;
+                case false: SetConfig("chkAutoClear", "false"); break;
             }
 
             switch (chkDrawGridAutomatically.IsChecked)
             {
-                case true: setConfig("chkDrawGridAutomatically", "true"); break;
-                case false: setConfig("chkDrawGridAutomatically", "false"); break;
+                case true: SetConfig("chkDrawGridAutomatically", "true"); break;
+                case false: SetConfig("chkDrawGridAutomatically", "false"); break;
             }
             switch (chkShowGrid.IsChecked)
             {
-                case true: setConfig("chkShowGrid", "true"); break;
-                case false: setConfig("chkShowGrid", "false"); break;
+                case true: SetConfig("chkShowGrid", "true"); break;
+                case false: SetConfig("chkShowGrid", "false"); break;
             }
             if (rbtnGraphTypeOfLine.IsChecked == true)
             {
-                setConfig("drawType", "1");
+                SetConfig("drawType", "1");
             }
             if (rbtnGraphTypeOfPoint.IsChecked == true)
             {
-                setConfig("drawType", "2");
+                SetConfig("drawType", "2");
             }
 
         }
 
-        private void delRegedit(object sender, EventArgs e)
+        private void DelRegeditItems(object sender, EventArgs e)
         {
             RegistryKey rk = Registry.CurrentUser;
             try
@@ -610,7 +610,7 @@ namespace 解析几何
             }
             catch (Exception)
             {
-                showErrorMessage("找不到配置文件！");
+                ShowErrorMessage("找不到配置文件！");
             }
         }
 
@@ -618,59 +618,64 @@ namespace 解析几何
 
         #region 缩放平移
 
-        private void btnClickEventHandlerMoveCoordinateToLeft(object sender, EventArgs e)
+        bool IsMouseDown = false;
+        Point mousePoint;
+        Point startMousePoint;
+        double startCvWidth;
+        double startCvHeight;
+        private void MoveCoordinateToLeftBtnClickEventHandler(object sender, EventArgs e)
         {
             string temp = txtCanvasLeft.Text;
             txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(temp)) / 5), 2).ToString();
-            clearCv();
-            initialize();
+            ClearAllGraphes();
+            Initialize();
             if (double.Parse(txtFunctionPrecision.Text) >= 4)
             {
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
 
-        private void btnClickEventHandlerMoveCoordinateToUp(object sender, EventArgs e)
+        private void MoveCoordinateToUpBtnClickEventHandler(object sender, EventArgs e)
         {
             string temp = txtCanvasTop.Text;
             txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) + (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
             txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) + (double.Parse(temp) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-            clearCv();
-            initialize();
+            ClearAllGraphes();
+            Initialize();
             if (double.Parse(txtFunctionPrecision.Text) >= 4)
             {
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
 
-        private void btnClickEventHandlerMoveCoordinateToRight(object sender, EventArgs e)
+        private void MoveCoordinateToRightBtnClickEventHandler(object sender, EventArgs e)
         {
             string temp = txtCanvasLeft.Text;
             txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(temp)) / 5), 2).ToString();
-            clearCv();
-            initialize();
+            ClearAllGraphes();
+            Initialize();
             if (double.Parse(txtFunctionPrecision.Text) >= 4)
             {
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
 
-        private void btnClickEventHandlerMoveCoordinateToDown(object sender, EventArgs e)
+        private void MoveCoordinateToDownBtnClickEventHandler(object sender, EventArgs e)
         {
             string temp = txtCanvasTop.Text;
             txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) - (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
             txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) - (double.Parse(temp) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-            clearCv();
-            initialize();
+            ClearAllGraphes();
+            Initialize();
             if (double.Parse(txtFunctionPrecision.Text) >= 4)
             {
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
 
-        private void winMouseWheelEventHandlerZoom(object sender, MouseWheelEventArgs e)
+        private void WinMouseWheelEventHandler(object sender, MouseWheelEventArgs e)
         {
 
 
@@ -697,11 +702,11 @@ namespace 解析几何
 
             }
 
-            draw();
+            Draw();
 
         }
 
-        private void refreshGrid()
+        private void RefreshCoordinateGrid()
         {
             if (chkDrawGridAutomatically.IsChecked == true)
             {
@@ -752,13 +757,13 @@ namespace 解析几何
             proportion = (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / cvsMainCanvas.ActualWidth;
             txtCanvasBottom.Text = (middle - 0.5 * proportion * cvsMainCanvas.ActualHeight).ToString();
             txtCanvasTop.Text = (middle + 0.5 * proportion * cvsMainCanvas.ActualHeight).ToString();
-            refreshGrid();
-            clearCv();
-            initialize();
-            draw();
+            RefreshCoordinateGrid();
+            ClearAllGraphes();
+            Initialize();
+            Draw();
         }
 
-        private void cv_MouseDown(object sender, MouseButtonEventArgs e)
+        private void WinPreviewMouseDownEventHandler(object sender, MouseButtonEventArgs e)
         {
             if (e.GetPosition(cvsMainCanvas).X > 0 && e.GetPosition(cvsMainCanvas).X < cvsMainCanvas.ActualWidth && e.GetPosition(cvsMainCanvas).Y > 0 && e.GetPosition(cvsMainCanvas).Y < cvsMainCanvas.ActualHeight)
             {
@@ -773,7 +778,7 @@ namespace 解析几何
             }
         }
 
-        private void winMouseMoveEventHandler(object sender, MouseEventArgs e)
+        private void WinMouseMoveEventHandler(object sender, MouseEventArgs e)
         {
             if (IsMouseDown)
             {
@@ -788,7 +793,7 @@ namespace 解析几何
                         );
                     ClipCursor(ref rect);
 
-                    
+
 
                     Point theMousePoint = e.GetPosition(this);
                     // if (theMousePoint.X > cv.Margin.Left && theMousePoint.X < cv.Margin.Left + cv.ActualWidth && theMousePoint.Y > cv.Margin.Top && theMousePoint.Y < cv.Margin.Top+cv.ActualWidth)
@@ -822,7 +827,7 @@ namespace 解析几何
             }
         }
 
-        private void winMouseUpEventHandler(object sender, MouseButtonEventArgs e)
+        private void WinMouseUpEventHandler(object sender, MouseButtonEventArgs e)
         {
             if (IsMouseDown)
             {
@@ -842,19 +847,19 @@ namespace 解析几何
                 ClipCursor(ref rect);
 
 
-                draw();
+                Draw();
 
             }
         }
 
 
-        private void Window_SizeChanged_1(object sender, SizeChangedEventArgs e)
+        private void WinSizeChangedWinTouchDownEventHandler(object sender, SizeChangedEventArgs e)
         {
-            draw();
+            Draw();
         }
 
 
-        private void zoom1(object sender, RoutedEventArgs e)
+        private void ZoomInBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasRight.Text;
             string temp2 = txtCanvasLeft.Text;
@@ -862,10 +867,10 @@ namespace 解析几何
             txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) + (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
             txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
-            draw();
+            Draw();
         }
 
-        private void zoom2(object sender, RoutedEventArgs e)
+        private void ZoomOutBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
             string temp2 = txtCanvasLeft.Text;
@@ -873,80 +878,76 @@ namespace 解析几何
             txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) - (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
             txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
-            draw();
+            Draw();
         }
 
-        private void zoom1Height(object sender, RoutedEventArgs e)
+        private void ZoomInHeightBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
             string temp2 = txtCanvasLeft.Text;
             txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) - (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
             txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) + (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-            draw();
+            Draw();
         }
 
-        private void zoom2Height(object sender, RoutedEventArgs e)
+        private void ZoomOutHeightBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
             string temp2 = txtCanvasLeft.Text;
             txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) + (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
             txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) - (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-            draw();
+            Draw();
         }
 
-        private void zoom1Width(object sender, RoutedEventArgs e)
+        private void ZoomInWidthBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
             string temp2 = txtCanvasLeft.Text;
             txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
-            draw();
+            Draw();
         }
 
-        private void zoom2Width(object sender, RoutedEventArgs e)
+        private void ZoomOutWidthBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
             string temp2 = txtCanvasLeft.Text;
             txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
-            draw();
+            Draw();
         }
 
-        bool IsMouseDown = false;
-        Point mousePoint;
-        Point startMousePoint;
-        double startCvWidth;
-        double startCvHeight;
+  
         #endregion
-        private void drawTypeHelp(object sender, EventArgs e)
+        private void ShowGraphTypeHelpBtnClickEventHandler(object sender, EventArgs e)
         {
             new 提示框(@"连点成线：适用于大多数图像
 点：适用于有突变的图像和直线，但斜率过高或导数过大部分效果不好"
                            ).ShowDialog();
         }
-
-
-        double rawTop;
-        double rawLeft;
-        double rawRight;
-        double rawBottom;
-        double rawCenterX;
-        double rawCenterY;
-        bool scaleInsteadOfMove = false;
-       // int step = 0;
-        private void Window_ManipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        #region 手势操作
+        int intFingerMount = 0;
+        double dblRawTop;
+        double dblRawLeft;
+        double dblRawRight;
+        double dblRawBottom;
+        double dblRawCenterX;
+        double dblRawCenterY;
+        bool blnScaleInsteadOfMove = false;
+        // int step = 0;
+        private void WinManipulationDeltaEventHandler(object sender, ManipulationDeltaEventArgs e)
         {
-           //step++;
+            //step++;
             // if (e.DeltaManipulation==ManipulationDelta.)
             FrameworkElement element = (FrameworkElement)e.Source;
-           // if(step%10==0)
+            // if(step%10==0)
             try
             {
                 Matrix matrix = ((MatrixTransform)element.RenderTransform).Matrix;
                 var deltaManipulation = e.CumulativeManipulation;
-                
+
                 Point center = new Point(element.ActualWidth / 2, element.ActualHeight / 2);
-               // Debug.WriteLine(deltaManipulation.Translation.Length);
+                // Debug.WriteLine(deltaManipulation.Translation.Length);
                 double scale = 1 / (deltaManipulation.Scale.Length / Math.Sqrt(2));
                 // Debug.WriteLine(scale);
                 //cvsMainCanvas.Height = cvsMainCanvas.Height * scale;
@@ -960,9 +961,9 @@ namespace 解析几何
                 //    draw();
                 //}
 
-              
 
-                if (fingerMount == 1 && scaleInsteadOfMove==false)
+
+                if (intFingerMount == 1 && blnScaleInsteadOfMove == false)
                 {
 
                     //  RECT rect = new RECT(
@@ -986,31 +987,31 @@ namespace 解析几何
                     //      mousePoint = theMousePoint;
 
                     //} 
-                   // Debug.WriteLine(1);
-                    txtCanvasLeft.Text = (rawLeft - (deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth) * (rawRight - rawLeft)).ToString();
-                    txtCanvasRight.Text = (rawRight - (deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth) * (rawRight - rawLeft)).ToString();
+                    // Debug.WriteLine(1);
+                    txtCanvasLeft.Text = (dblRawLeft - (deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth) * (dblRawRight - dblRawLeft)).ToString();
+                    txtCanvasRight.Text = (dblRawRight - (deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth) * (dblRawRight - dblRawLeft)).ToString();
 
-                    txtCanvasBottom.Text = (rawBottom + (deltaManipulation.Translation.Y / cvsMainCanvas.ActualHeight) * (rawTop - rawBottom)).ToString();
-                    txtCanvasTop.Text = (rawTop + (deltaManipulation.Translation.Y / cvsMainCanvas.ActualHeight) * (rawTop - rawBottom)).ToString();
+                    txtCanvasBottom.Text = (dblRawBottom + (deltaManipulation.Translation.Y / cvsMainCanvas.ActualHeight) * (dblRawTop - dblRawBottom)).ToString();
+                    txtCanvasTop.Text = (dblRawTop + (deltaManipulation.Translation.Y / cvsMainCanvas.ActualHeight) * (dblRawTop - dblRawBottom)).ToString();
                 }
-                else if (fingerMount == 2)
+                else if (intFingerMount == 2)
                 {
-                    scaleInsteadOfMove = true;
+                    blnScaleInsteadOfMove = true;
                     //Debug.WriteLine(2);
-                    txtCanvasLeft.Text = (rawCenterX - scale * (rawRight - rawLeft) / 2).ToString();
-                    txtCanvasRight.Text = (rawCenterX + scale * (rawRight - rawLeft) / 2).ToString();
+                    txtCanvasLeft.Text = (dblRawCenterX - scale * (dblRawRight - dblRawLeft) / 2).ToString();
+                    txtCanvasRight.Text = (dblRawCenterX + scale * (dblRawRight - dblRawLeft) / 2).ToString();
 
-                    txtCanvasBottom.Text = (rawCenterY - scale * (rawTop - rawBottom) / 2).ToString();
-                    txtCanvasTop.Text = (rawCenterY + scale * (rawTop - rawBottom) / 2).ToString();
+                    txtCanvasBottom.Text = (dblRawCenterY - scale * (dblRawTop - dblRawBottom) / 2).ToString();
+                    txtCanvasTop.Text = (dblRawCenterY + scale * (dblRawTop - dblRawBottom) / 2).ToString();
                 }
 
 
                 //Stopwatch sw = new Stopwatch();
-             // sw.Start();
-                initialize();
-                   // sw.Stop();
-              //  sw.Reset();
-              //  Debug.WriteLine(sw.ElapsedMilliseconds);
+                // sw.Start();
+                Initialize();
+                // sw.Stop();
+                //  sw.Reset();
+                //  Debug.WriteLine(sw.ElapsedMilliseconds);
                 //drawCoordinate();
 
             }
@@ -1019,69 +1020,46 @@ namespace 解析几何
             //matrix.ScaleAt(deltaManipulation.Scale.X, deltaManipulation.Scale.Y, center.X, center.Y);
         }
 
-        private void Window_ManipulationStarting(object sender, ManipulationStartingEventArgs e)
+        private void WinManipulationStartingEventHandler(object sender, ManipulationStartingEventArgs e)
         {
-            rawTop = double.Parse( txtCanvasTop.Text);
-            rawLeft = double.Parse(txtCanvasLeft.Text);
-            rawRight =double.Parse( txtCanvasRight.Text);
-            rawBottom =double.Parse( txtCanvasBottom.Text);
-            rawCenterX = 0.5 * (rawLeft + rawRight);
-            rawCenterY = 0.5 * (rawTop + rawBottom);
+            dblRawTop = double.Parse(txtCanvasTop.Text);
+            dblRawLeft = double.Parse(txtCanvasLeft.Text);
+            dblRawRight = double.Parse(txtCanvasRight.Text);
+            dblRawBottom = double.Parse(txtCanvasBottom.Text);
+            dblRawCenterX = 0.5 * (dblRawLeft + dblRawRight);
+            dblRawCenterY = 0.5 * (dblRawTop + dblRawBottom);
             e.ManipulationContainer = cvsMainCanvas;
             e.Mode = ManipulationModes.All;
-           Debug.WriteLine("start")
-;scaleInsteadOfMove = false;
+            Debug.WriteLine("start")
+ ; blnScaleInsteadOfMove = false;
         }
 
-        private void Window_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
+        private void WinManipulationCompletedEventHandler(object sender, ManipulationCompletedEventArgs e)
         {
-            draw();
+            Draw();
         }
 
-        private void cvsMainCanvas_TouchMove(object sender, TouchEventArgs e)
+        private void WinTouchUpEventHandler(object sender, TouchEventArgs e)
         {
-            this.IsManipulationEnabled = false;
-        }
-
-        private void Window_TouchMove(object sender, TouchEventArgs e)
-        {
-           // this.IsManipulationEnabled = false;
-        }
-
-        private void Window_TouchUp(object sender, TouchEventArgs e)
-        {
-          //  sleep(200);
-             fingerMount--;
+            //  sleep(200);
+            intFingerMount--;
             //enableOrDisableManipulation();
-          
+
         }
 
-        private void Window_TouchDown(object sender, TouchEventArgs e)
+        private void WinTouchDownEventHandler(object sender, TouchEventArgs e)
         {
-           fingerMount++;
+            intFingerMount++;
             //enableOrDisableManipulation();
-            
+
         }
+        #endregion
         
-        private void enableOrDisableManipulation()
+        private void ClearAllGraphes(object sender, EventArgs e)
         {
-            Debug.WriteLine(fingerMount);
-            //if(fingerMount>=2)
-            //{
-            //    this.RaiseEvent(new RoutedEventArgs(Window.TouchDownEvent));
-            //    this.IsManipulationEnabled = true;
-            //}
-            //else
-            //{
-            //    this.IsManipulationEnabled = false;
-            //}
+            ClearAllGraphes();
         }
-        int fingerMount = 0;
-        private void clearAll(object sender, EventArgs e)
-        {
-            clearCv();
-        }
-        private void save(object sender, EventArgs e)
+        private void SaveGraphAsFiles(object sender, EventArgs e)
         {
             Rect bounds = VisualTreeHelper.GetDescendantBounds(cvsMainCanvas);
             double dpi = 96d;
@@ -1113,7 +1091,7 @@ namespace 解析几何
             }
             catch (Exception ex)
             {
-                showErrorMessage(ex.ToString());
+                ShowErrorMessage(ex.ToString());
             }
         }
 

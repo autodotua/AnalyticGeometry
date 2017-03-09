@@ -4,17 +4,19 @@
          xmlns:CustomWPFColorPicker="clr-namespace:CustomWPFColorPicker;assembly=CustomWPFColorPicker"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="解析几何.解析几何图像"
       Title="解析几何图像" Height="730" Width="960"
-    PreviewMouseDown="cv_MouseDown"  
-    PreviewMouseWheel="winMouseWheelEventHandlerZoom" 
-    SizeChanged="Window_SizeChanged_1" 
-    Loaded="opening" Closing="closing" 
-    MouseMove="winMouseMoveEventHandler" 
-    PreviewMouseUp="winMouseUpEventHandler"
+    PreviewMouseDown="WinPreviewMouseDownEventHandler"  
+    PreviewMouseWheel="WinMouseWheelEventHandler" 
+    SizeChanged="WinSizeChangedWinTouchDownEventHandler" 
+    Loaded="WinLoadedEventHandler" Closing="WinClosingEventHandler" 
+    MouseMove="WinMouseMoveEventHandler" 
+    PreviewMouseUp="WinMouseUpEventHandler"
     WindowStartupLocation="CenterScreen" 
-    ManipulationDelta="Window_ManipulationDelta"
-    ManipulationStarting="Window_ManipulationStarting"
-    ManipulationCompleted="Window_ManipulationCompleted"
-    IsManipulationEnabled="True" TouchMove="Window_TouchMove" TouchUp="Window_TouchUp" TouchDown="Window_TouchDown">
+    ManipulationDelta="WinManipulationDeltaEventHandler"
+    ManipulationStarting="WinManipulationStartingEventHandler"
+    ManipulationCompleted="WinManipulationCompletedEventHandler"
+    IsManipulationEnabled="True" 
+    TouchUp="WinTouchUpEventHandler" 
+    TouchDown="WinTouchDownEventHandler">
 
 
 
@@ -59,13 +61,13 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="y="/>
-                            <TextBox x:Name="txtFunctionInput" Grid.Column="2" PreviewKeyDown="input1Key" VerticalAlignment="Center"></TextBox>
-                            <Button Click="btnClickEventHandlerFunctionOK" x:Name="btnFunctionOK" Grid.Column="4"  Content="确定"/>
+                            <TextBox x:Name="txtFunctionInput" Grid.Column="2" PreviewKeyDown="FunctionOKBtnPreviewKeyDownEventHandler" VerticalAlignment="Center"></TextBox>
+                            <Button Click="FunctionOKBtnClickEventHandler" x:Name="btnFunctionOK" Grid.Column="4"  Content="确定"/>
                             <TextBlock Text="绘制精度：" Grid.ColumnSpan="3" Grid.Row="2"/>
-                            <TextBox x:Name="txtFunctionPrecision" Grid.Column="4" Grid.Row="2" Text="8" TextChanged="onlyPlusInt"></TextBox>
+                            <TextBox x:Name="txtFunctionPrecision" Grid.Column="4" Grid.Row="2" Text="8" TextChanged="UniversalTxtEnterOnlyIntegerTextChangedEventHandler"></TextBox>
                             <TextBlock Grid.Row="3" Foreground="Gray" Grid.ColumnSpan="3">值低精度高值高速度快<LineBreak/>大导函数图像请降低值</TextBlock>
                             <TextBlock Grid.ColumnSpan="3" Grid.Row="5">变量标识符：</TextBlock>
-                            <TextBox x:Name="txtFunctionVariable" Grid.Column="4" Grid.Row="5" Text="x" TextChanged="disabledNum" ></TextBox>
+                            <TextBox x:Name="txtFunctionVariable" Grid.Column="4" Grid.Row="5" Text="x" TextChanged="UniversalTxtEnterNoNumberTextChangedEventHandler" ></TextBox>
                         </Grid>
                     </TabItem>
                     <TabItem Header="参数方程" >
@@ -94,9 +96,9 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock>x=</TextBlock>
                                 <TextBlock Grid.Row="2">y=</TextBlock>
-                                <TextBox PreviewKeyDown="paraxKey" x:Name="txtParametricX" Grid.Column="2"/>
-                                <TextBox PreviewKeyDown="parayKey" x:Name="txtParametricY" Grid.Column="2" Grid.Row="2"/>
-                                <Button x:Name="btnParametricOK" Grid.Column="4" Click="ok2Click">确定</Button>
+                                <TextBox PreviewKeyDown="TxtParametricXBtnPreviewKeyDownEventHandler" x:Name="txtParametricX" Grid.Column="2"/>
+                                <TextBox PreviewKeyDown="TxtParametricYBtnPreviewKeyDownEventHandler" x:Name="txtParametricY" Grid.Column="2" Grid.Row="2"/>
+                                <Button x:Name="btnParametricOK" Grid.Column="4" Click="ParametricOKBtnClickEventHandler">确定</Button>
                                 <Button x:Name="btnParametricTemplate" Grid.Column="4" Grid.Row="3" VerticalAlignment="Center">模板</Button>
                             </Grid>
                             <Grid Grid.Row="2" >
@@ -118,10 +120,10 @@
                                 <TextBlock Grid.Column="4">精度：</TextBlock>
                                 <TextBlock Grid.Row="2">开始：</TextBlock>
                                 <TextBlock Grid.Row="2" Grid.Column="4">结束：</TextBlock>
-                                <TextBox TextChanged="disabledNum"  x:Name="txtParametricParameter" Grid.Column="2" Text="t"/>
-                                <TextBox TextChanged="onlyPlusNum" x:Name="txtParametricPrecision" Grid.Column="6" Text="0.1"/>
-                                <TextBox TextChanged="onlyNum"  x:Name="txtParametricStart" Grid.Column="2" Grid.Row="2" Text="-10"/>
-                                <TextBox TextChanged="onlyNum"  x:Name="txtParametricEnd" Grid.Row="2" Grid.Column="6" Text="10"/>
+                                <TextBox TextChanged="UniversalTxtEnterNoNumberTextChangedEventHandler"  x:Name="txtParametricParameter" Grid.Column="2" Text="t"/>
+                                <TextBox TextChanged="UniversalTxtEnterOnlyPositiveNumberTextChangedEventHandler" x:Name="txtParametricPrecision" Grid.Column="6" Text="0.1"/>
+                                <TextBox TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  x:Name="txtParametricStart" Grid.Column="2" Grid.Row="2" Text="-10"/>
+                                <TextBox TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  x:Name="txtParametricEnd" Grid.Row="2" Grid.Column="6" Text="10"/>
                             </Grid>
                         </Grid>
 
@@ -161,12 +163,12 @@
                                 <ColumnDefinition Width="4"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Button Content="保存"  Click="save"/>
-                            <Button  Content="清空" Grid.Column="6" Click="clearAll" />
-                            <TextBox x:Name="txtCanvasTop" Grid.Column="3" Text="10" TextChanged="onlyNum" MaxWidth="40" />
-                            <TextBox x:Name="txtCanvasLeft" Grid.Row="3" Text="-10" TextChanged="onlyNum"  MaxWidth="40" Width="40"/>
-                            <TextBox x:Name="txtCanvasBottom" MinWidth="28" Grid.Row="6" Grid.Column="3" Text="-10" TextChanged="onlyNum"  MaxWidth="40"/>
-                            <TextBox x:Name="txtCanvasRight" Grid.Row="3" Grid.Column="6" Text="10" TextChanged="onlyNum"  MaxWidth="40" Width="40"/>
+                            <Button Content="保存"  Click="SaveGraphAsFiles"/>
+                            <Button  Content="清空" Grid.Column="6" Click="ClearAllGraphes" />
+                            <TextBox x:Name="txtCanvasTop" Grid.Column="3" Text="10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler" MaxWidth="40" />
+                            <TextBox x:Name="txtCanvasLeft" Grid.Row="3" Text="-10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  MaxWidth="40" Width="40"/>
+                            <TextBox x:Name="txtCanvasBottom" MinWidth="28" Grid.Row="6" Grid.Column="3" Text="-10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  MaxWidth="40"/>
+                            <TextBox x:Name="txtCanvasRight" Grid.Row="3" Grid.Column="6" Text="10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  MaxWidth="40" Width="40"/>
                             <CheckBox x:Name="chkAutoClear" Grid.Row="6" Grid.Column="4" HorizontalAlignment="Right"  Grid.ColumnSpan="3" IsChecked="True"   >自动清除</CheckBox>
                             <Grid Grid.Row="2" Grid.RowSpan="3" Grid.Column="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" >
                                 <Grid.RowDefinitions>
@@ -183,10 +185,10 @@
                                     <ColumnDefinition Width="4"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Button Click="btnClickEventHandlerMoveCoordinateToUp" Grid.Column="2" >↑</Button>
-                                <Button Click="btnClickEventHandlerMoveCoordinateToDown" Grid.Column="2"  Grid.Row="4">↓</Button>
-                                <Button Click="btnClickEventHandlerMoveCoordinateToLeft"  Grid.RowSpan="5">←</Button>
-                                <Button Click="btnClickEventHandlerMoveCoordinateToRight" Grid.RowSpan="5" Grid.Column="4">→</Button>
+                                <Button Click="MoveCoordinateToUpBtnClickEventHandler" Grid.Column="2" >↑</Button>
+                                <Button Click="MoveCoordinateToDownBtnClickEventHandler" Grid.Column="2"  Grid.Row="4">↓</Button>
+                                <Button Click="MoveCoordinateToLeftBtnClickEventHandler"  Grid.RowSpan="5">←</Button>
+                                <Button Click="MoveCoordinateToRightBtnClickEventHandler" Grid.RowSpan="5" Grid.Column="4">→</Button>
                                 <Grid Grid.Row="2" Grid.Column="2" >
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -204,20 +206,20 @@
                                         <RowDefinition Height="4"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <Button Grid.Column="2" Grid.Row="2" Click="zoom1" >+</Button>
-                                    <Button Grid.Row="4" Grid.Column="2" Click="zoom2">-</Button>
-                                    <Button Grid.RowSpan="3" Grid.Row="2" Click="zoom1Height">
+                                    <Button Grid.Column="2" Grid.Row="2" Click="ZoomInBtnClickEventHandler" >+</Button>
+                                    <Button Grid.Row="4" Grid.Column="2" Click="ZoomOutBtnClickEventHandler">-</Button>
+                                    <Button Grid.RowSpan="3" Grid.Row="2" Click="ZoomInHeightBtnClickEventHandler">
                                         <TextBlock>
                                             ↑<LineBreak/>↓
                                         </TextBlock>
                                     </Button>
-                                    <Button Grid.RowSpan="3" Grid.Row="2" Grid.Column="4" Click="zoom2Height">
+                                    <Button Grid.RowSpan="3" Grid.Row="2" Grid.Column="4" Click="ZoomOutHeightBtnClickEventHandler">
                                         <TextBlock>
                                            ↓ <LineBreak/>↑
                                         </TextBlock>
                                     </Button>
-                                    <Button Grid.ColumnSpan="5" Click="zoom1Width">←→</Button>
-                                    <Button Grid.Row="6" Grid.ColumnSpan="5" Click="zoom2Width">→←</Button>
+                                    <Button Grid.ColumnSpan="5" Click="ZoomInWidthBtnClickEventHandler">←→</Button>
+                                    <Button Grid.Row="6" Grid.ColumnSpan="5" Click="ZoomOutWidthBtnClickEventHandler">→←</Button>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -247,7 +249,7 @@
                             </Grid.ColumnDefinitions>
                             <RadioButton x:Name="rbtnGraphTypeOfLine" Grid.Column="1" IsChecked="True">连点成线</RadioButton>
                             <RadioButton x:Name="rbtnGraphTypeOfPoint" Grid.Column="3" VerticalAlignment="Center">点</RadioButton>
-                            <Button Click="drawTypeHelp" Grid.Column="5">帮助</Button>
+                            <Button Click="ShowGraphTypeHelpBtnClickEventHandler" Grid.Column="5">帮助</Button>
                         </Grid>
                     </Grid>
                 </GroupBox>
@@ -272,9 +274,9 @@
 
                             </Grid.ColumnDefinitions>
                             <TextBlock VerticalAlignment="Center">竖向：</TextBlock>
-                            <TextBox x:Name="txtVerticalSeparationDistance" Grid.Column="2" Text="1" TextChanged="onlyPlusNum" VerticalAlignment="Center"></TextBox>
+                            <TextBox x:Name="txtVerticalSeparationDistance" Grid.Column="2" Text="1" TextChanged="UniversalTxtEnterOnlyPositiveNumberTextChangedEventHandler" VerticalAlignment="Center"></TextBox>
                             <TextBlock Grid.Row="2" VerticalAlignment="Center">横向：</TextBlock>
-                            <TextBox x:Name="txtHorizontalSeparationDistance" Grid.Row="2" Grid.Column="2" Text="1" TextChanged="onlyPlusNum" VerticalAlignment="Center"></TextBox>
+                            <TextBox x:Name="txtHorizontalSeparationDistance" Grid.Row="2" Grid.Column="2" Text="1" TextChanged="UniversalTxtEnterOnlyPositiveNumberTextChangedEventHandler" VerticalAlignment="Center"></TextBox>
                         </Grid>
                         <Grid Grid.Column="2" >
                             <Grid.RowDefinitions>
@@ -307,18 +309,18 @@
 
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Row="1" VerticalAlignment="Center">粗细（像素）：</TextBlock>
-                        <TextBox x:Name="txtLineThickness" Grid.Column="2" Grid.Row="1" Text="3" TextChanged="onlyPlusInt"></TextBox>
+                        <TextBox x:Name="txtLineThickness" Grid.Column="2" Grid.Row="1" Text="3" TextChanged="UniversalTxtEnterOnlyIntegerTextChangedEventHandler"></TextBox>
                         <TextBlock  Grid.Row="3" VerticalAlignment="Center">颜色：</TextBlock>
                         <TextBox x:Name="txtGraphColor" Grid.Row="3" Grid.Column="1" Text="{Binding ElementName=cd,Path=CurrentColor, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" HorizontalAlignment="Right"/>
                         <CustomWPFColorPicker:ColorPickerControlView x:Name="colorPicker" Grid.Column="2" Grid.Row="3" CurrentColor="Red" />
                     </Grid>
                 </GroupBox>
-                <Button Click="delRegedit" Grid.Row="10">恢复初始化</Button>
+                <Button Click="DelRegeditItems" Grid.Row="10">恢复初始化</Button>
             </Grid>
         </Grid>
 
         <ZoomableCanvas    x:Name="cvsMainCanvas" Grid.Column="1" Panel.ZIndex="-1"    IsManipulationEnabled="True" >
-           
+
             <!--<ZoomableCanvas.RenderTransform>
                 <MatrixTransform/>
             </ZoomableCanvas.RenderTransform>-->
