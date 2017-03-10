@@ -41,7 +41,7 @@ namespace AnalyticGeometry
             {
                 Filter = "透明图片png|*.png"
             };
-            sfd.FileName = DateTime.Now.ToString("yyyyMMdd"); 
+            sfd.FileName = DateTime.Now.ToString("yyyyMMdd");
 
 
 
@@ -53,7 +53,7 @@ namespace AnalyticGeometry
             RefreshCoordinateGrid();
             //if (chkMultipleFunction.IsChecked == true)
             //{
-                ClearAllGraphs();
+            ClearAllGraphs();
             //}
             DrawCoordinate();
         }
@@ -81,10 +81,18 @@ namespace AnalyticGeometry
             List<TextBlock> tbList = new System.Collections.Generic.List<TextBlock>();
             if (chkShowGrid.IsChecked == true)
             {
-
-                double leftLine = Math.Round(cc.ToRealX(-cvsMainCanvas.ActualWidth) / double.Parse(txtVerticalSeparationDistance.Text)) * double.Parse(txtVerticalSeparationDistance.Text);
-                double rightLine = Math.Round(cc.ToRealX(2 * cvsMainCanvas.ActualWidth) / double.Parse(txtVerticalSeparationDistance.Text)) * double.Parse(txtVerticalSeparationDistance.Text);
-                for (double i = leftLine; i <= rightLine; i += double.Parse(txtVerticalSeparationDistance.Text))//Y轴右
+                //左边界横坐标
+                double leftLine =
+                    Math.Round(cc.ToRealX(-cvsMainCanvas.ActualWidth)
+                    / double.Parse(txtVerticalSeparationDistance.Text))
+                    * double.Parse(txtVerticalSeparationDistance.Text);
+                //
+                double rightLine =
+                    Math.Round(cc.ToRealX(2 * cvsMainCanvas.ActualWidth)
+                    / double.Parse(txtVerticalSeparationDistance.Text))
+                    * double.Parse(txtVerticalSeparationDistance.Text);
+                //Y轴右半部份的
+                for (double i = leftLine; i <= rightLine; i += double.Parse(txtVerticalSeparationDistance.Text))
                 {
                     if (Math.Round(i, 5) != 0)
                     {
@@ -169,7 +177,7 @@ namespace AnalyticGeometry
             l.Y1 = y1;
             l.Y2 = y2;
             cvsMainCanvas.Children.Add(l);
-        
+
         }
         private void DrawLine(Point p1, Point p2)
         {
@@ -209,17 +217,17 @@ namespace AnalyticGeometry
 
             colorPicker.BorderBrush = Brushes.Red;
             Initialize();
-            
+
             try
             {
-              //  if(chkMultipleFunction.IsChecked==true)
-               // {
-                    foreach (var i in txtFunctionInput.Text.Split(new string[] { Environment.NewLine },StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        functionExpression = Calculate.ReplaceExpressionPreliminary(i, txtFunctionVariable.Text);
-                        DrawFunctionGraph();
-                    }
-              //  }
+                //  if(chkMultipleFunction.IsChecked==true)
+                // {
+                foreach (var i in txtFunctionInput.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    functionExpression = Calculate.ReplaceExpressionPreliminary(i, txtFunctionVariable.Text);
+                    DrawFunctionGraph();
+                }
+                //  }
             }
             catch
             {
@@ -338,12 +346,16 @@ namespace AnalyticGeometry
         Dictionary<TextBox, string> lastString = new Dictionary<TextBox, string>();
         private void UniversalTxtEnterOnlyNumberTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
-            double trynum;
+            double tryNum;
+            if (((TextBox)sender).Text == "-")
+            {
+                return;
+            }
             if (((TextBox)sender).Text != "")
             {
                 try
                 {
-                    trynum = double.Parse(((TextBox)sender).Text);
+                    tryNum = double.Parse(((TextBox)sender).Text);
                     lastString[(TextBox)sender] = ((TextBox)sender).Text;
                 }
                 catch (Exception)
@@ -356,20 +368,20 @@ namespace AnalyticGeometry
                     {
                         ((TextBox)sender).Text = "";
                     }
-
+                    ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
                 }
             }
         }
 
         private void UniversalTxtEnterOnlyPositiveNumberTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
-            double trynum;
+            double tryNum;
             if (((TextBox)sender).Text != "")
             {
                 try
                 {
-                    trynum = double.Parse(((TextBox)sender).Text);
-                    if (trynum <= 0)
+                    tryNum = double.Parse(((TextBox)sender).Text);
+                    if (tryNum <= 0)
                     {
                         ((TextBox)sender).Text = lastString[(TextBox)sender];
                         return;
@@ -386,6 +398,7 @@ namespace AnalyticGeometry
                     {
                         ((TextBox)sender).Text = "";
                     }
+                    ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
                 }
             }
         }
@@ -394,11 +407,11 @@ namespace AnalyticGeometry
         {
             if (((TextBox)sender).Text != "")
             {
-                double trynum;
+                double tryNum;
                 try
                 {
-                    trynum = double.Parse(((TextBox)sender).Text);
-                    if (trynum != Math.Round(trynum) || trynum <= 0)
+                    tryNum = double.Parse(((TextBox)sender).Text);
+                    if (tryNum != Math.Round(tryNum) || tryNum <= 0)
                     {
                         ((TextBox)sender).Text = lastString[(TextBox)sender];
                         return;
@@ -415,6 +428,7 @@ namespace AnalyticGeometry
                     {
                         ((TextBox)sender).Text = "";
                     }
+                    ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
                 }
             }
         }
@@ -426,6 +440,7 @@ namespace AnalyticGeometry
                 if (((TextBox)sender).Text.Contains(i.ToString()))
                 {
                     ((TextBox)sender).Text = lastString[(TextBox)sender];
+                    ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
                     return;
                 }
             }
@@ -434,7 +449,7 @@ namespace AnalyticGeometry
         #endregion
 
         #region 键盘操作
-        private void FunctionOKBtnPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
+        private void FunctionOKTxtPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
         {
 
             if (e.Key == Key.Space)
@@ -576,6 +591,7 @@ namespace AnalyticGeometry
             SetConfig("txtLineThickness", txtLineThickness.Text);
             SetConfig("txtParametricParameter", txtParametricParameter.Text);
             SetConfig("txtParametricParameter", txtParametricParameter.Text);
+            SetConfig("txtParametricStart", txtParametricStart.Text);
             SetConfig("txtParametricEnd", txtParametricEnd.Text);
             SetConfig("txtParametricPrecision", txtParametricPrecision.Text);
             switch (chkMultipleFunction.IsChecked)
@@ -598,7 +614,7 @@ namespace AnalyticGeometry
             {
                 SetConfig("rbtnGraphTypeOfLine", "1");
             }
-           else
+            else
             {
                 SetConfig("rbtnGraphTypeOfLine", "0");
             }
@@ -688,32 +704,73 @@ namespace AnalyticGeometry
 
         private void WinMouseWheelEventHandler(object sender, MouseWheelEventArgs e)
         {
-
-
-
-            if (e.Delta > 0)
+            //如果是在画布部分滚轮
+            if (Mouse.GetPosition(this as FrameworkElement).X > 250)
             {
-                string temp1 = txtCanvasTop.Text;
-                string temp2 = txtCanvasLeft.Text;
-                txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) - (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-                txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) + (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-                txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
-                txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
+
+                if (e.Delta > 0)
+                {
+                    string temp1 = txtCanvasTop.Text;
+                    string temp2 = txtCanvasLeft.Text;
+                    txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) - (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
+                    txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) + (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
+                    txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
+                    txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
 
 
+                }
+                else
+                {
+                    string temp1 = txtCanvasTop.Text;
+                    string temp2 = txtCanvasLeft.Text;
+                    txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) + (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
+                    txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) - (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
+                    txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
+                    txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
+
+                }
+
+                Draw();
             }
+           //如果在操作区滚轮
             else
             {
-                string temp1 = txtCanvasTop.Text;
-                string temp2 = txtCanvasLeft.Text;
-                txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) + (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-                txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) - (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-                txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
-                txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
+                //如果界面高度足够就不需要滚轮来调节了了
+                if (this.ActualHeight >= 720)
+                    return;
+                else
+                {
+                    if (e.Delta > 0)
+                    {
+                      //  Debug.WriteLine();
+                        if (grdSettings.Margin.Top<4)
+                        {
+                            grdSettings.Margin = new Thickness(
+                                 grdSettings.Margin.Left,
+                                  grdSettings.Margin.Top + 8,
+                                   grdSettings.Margin.Right,
+                                    grdSettings.Margin.Bottom + 8);
+                        }
+                    }
+                    else
+                    {
+                        //Debug.WriteLine("2");
+                        if(this.Height - grdSettings.Margin.Top > 710)
+                        {
+                            return;
+                        }
+                        grdSettings.Margin = new Thickness(
+                                 grdSettings.Margin.Left,
+                                  grdSettings.Margin.Top - 8,
+                                   grdSettings.Margin.Right,
+                                    grdSettings.Margin.Bottom - 8);
+                        
+                        
+                       // if () { }
+                    }
+                }
 
             }
-
-            Draw();
 
         }
 
@@ -801,6 +858,7 @@ namespace AnalyticGeometry
 
         private void WinMouseMoveEventHandler(object sender, MouseEventArgs e)
         {
+
             if (IsMouseDown)
             {
                 if (e.LeftButton == MouseButtonState.Pressed)
@@ -819,34 +877,16 @@ namespace AnalyticGeometry
                     Point theMousePoint = e.GetPosition(this);
                     // if (theMousePoint.X > cv.Margin.Left && theMousePoint.X < cv.Margin.Left + cv.ActualWidth && theMousePoint.Y > cv.Margin.Top && theMousePoint.Y < cv.Margin.Top+cv.ActualWidth)
                     //   {
-                    if (theMousePoint.X > 242)
-                    {
-                        cvsMainCanvas.Margin = new Thickness(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X), cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y), -(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X)), -(cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y)));
-                        mousePoint = theMousePoint;
-                    }
+                    //if (theMousePoint.X > 242)
+                    //{
+                    cvsMainCanvas.Margin = new Thickness(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X), cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y), -(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X)), -(cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y)));
+                    mousePoint = theMousePoint;
+                    //}
                     //   }
                 }
             }
         }
 
-        [DllImport("user32.dll")]
-        static extern bool ClipCursor(ref RECT lpRect);
-
-        public struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-
-            public RECT(Int32 left, Int32 top, Int32 right, Int32 bottom)
-            {
-                Left = left;
-                Top = top;
-                Right = right;
-                Bottom = bottom;
-            }
-        }
 
         private void WinMouseUpEventHandler(object sender, MouseButtonEventArgs e)
         {
@@ -873,10 +913,46 @@ namespace AnalyticGeometry
             }
         }
 
+        [DllImport("user32.dll")]
+        static extern bool ClipCursor(ref RECT lpRect);
 
-        private void WinSizeChangedWinTouchDownEventHandler(object sender, SizeChangedEventArgs e)
+        public struct RECT
         {
-            Draw();
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+
+            public RECT(Int32 left, Int32 top, Int32 right, Int32 bottom)
+            {
+                Left = left;
+                Top = top;
+                Right = right;
+                Bottom = bottom;
+            }
+        }
+
+
+
+        private void WinSizeChangedEventHandler(object sender, SizeChangedEventArgs e)
+        {
+            //Debug.WriteLine(this.Height);
+            //Debug.WriteLine(grdSettings.Margin.Top);
+
+            //如果发现最底端已经到底了，那么要把Margin往下调，也就是底部吸住，直到顶部完全露出来为止。
+           while(this.Height - grdSettings.Margin.Top > 730&& grdSettings.Margin.Top<4)
+            {
+                    grdSettings.Margin = new Thickness(
+                         grdSettings.Margin.Left,
+                          grdSettings.Margin.Top + 1,
+                          
+                grdSettings.Margin.Right,
+                            grdSettings.Margin.Bottom + 1);
+                //Debug.WriteLine("2     " + grdSettings.Margin.Top);
+            }
+            Initialize();
+            //Draw();
+
         }
 
 
@@ -938,7 +1014,7 @@ namespace AnalyticGeometry
             Draw();
         }
 
-  
+
         #endregion
         private void ShowGraphTypeHelpBtnClickEventHandler(object sender, EventArgs e)
         {
@@ -1080,7 +1156,7 @@ namespace AnalyticGeometry
         {
             new OrdinaryCalculator().Show();
         }
-private void OpenSolveEquationsBtnClickEventHandler(object sender, RoutedEventArgs e)
+        private void OpenSolveEquationsBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             new SolveEquations().Show();
         }

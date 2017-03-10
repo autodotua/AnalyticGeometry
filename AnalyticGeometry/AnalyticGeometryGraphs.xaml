@@ -6,7 +6,7 @@
       Title="解析几何图像" Height="730" Width="960"
     PreviewMouseDown="WinPreviewMouseDownEventHandler"  
     PreviewMouseWheel="WinMouseWheelEventHandler" 
-    SizeChanged="WinSizeChangedWinTouchDownEventHandler" 
+    SizeChanged="WinSizeChangedEventHandler" 
     Loaded="WinLoadedEventHandler" Closing="WinClosingEventHandler" 
     MouseMove="WinMouseMoveEventHandler" 
     PreviewMouseUp="WinMouseUpEventHandler"
@@ -27,7 +27,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid Background="White">
-            <Grid Margin=" 4" >
+            <Grid x:Name="grdSettings" Margin=" 4" VerticalAlignment="Top" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="8"/>
@@ -61,7 +61,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="y="/>
-                            <TextBox x:Name="txtFunctionInput" Grid.Column="2" PreviewKeyDown="FunctionOKBtnPreviewKeyDownEventHandler" VerticalAlignment="Center" AcceptsReturn="True"></TextBox>
+                            <TextBox x:Name="txtFunctionInput" Grid.Column="2" PreviewKeyDown="FunctionOKTxtPreviewKeyDownEventHandler" VerticalAlignment="Center" AcceptsReturn="True"></TextBox>
                             <Button Click="FunctionOKBtnClickEventHandler" x:Name="btnFunctionOK" Grid.Column="4"  Content="确定"/>
                             <TextBlock Text="绘制精度：" Grid.ColumnSpan="3" Grid.Row="2"/>
                             <TextBox x:Name="txtFunctionPrecision" Grid.Column="4" Grid.Row="2" Text="10" TextChanged="UniversalTxtEnterOnlyIntegerTextChangedEventHandler"></TextBox>
@@ -334,7 +334,7 @@
         </Grid>
 
         <Canvas    x:Name="cvsMainCanvas" Grid.Column="1" Panel.ZIndex="-1"    IsManipulationEnabled="True" >
-
+            
             <!--<ZoomableCanvas.RenderTransform>
                 <MatrixTransform/>
             </ZoomableCanvas.RenderTransform>-->
