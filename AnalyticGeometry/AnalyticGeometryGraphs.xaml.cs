@@ -28,13 +28,7 @@ namespace AnalyticGeometry
             InitializeComponent();
 
         }
-
-
-
-
-
-
-
+        
         private void SaveGraphBtnClickEventHandler(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog()
@@ -46,76 +40,84 @@ namespace AnalyticGeometry
 
 
         }
-
+        /// <summary>
+        /// 绘制之前的初始化
+        /// </summary>
         private void Initialize()
         {
-            cc = new CustomCoordinate(grdMain.ColumnDefinitions[1].ActualWidth, grdMain.ActualHeight, double.Parse(txtCanvasLeft.Text), double.Parse(txtCanvasRight.Text), double.Parse(txtCanvasTop.Text), double.Parse(txtCanvasBottom.Text));
-            RefreshCoordinateGrid();
+            cc = new CustomCoordinate(grdMain.ColumnDefinitions[1].ActualWidth, 
+                grdMain.ActualHeight, double.Parse(txtCanvasLeft.Text), 
+                double.Parse(txtCanvasRight.Text), double.Parse(txtCanvasTop.Text), 
+                double.Parse(txtCanvasBottom.Text));//实例化一个自定义坐标系
+            RefreshCoordinateGrid();//重置网格间距
             //if (chkMultipleFunction.IsChecked == true)
             //{
-            ClearAllGraphs();
+            ClearAllGraphs();//清空坐标系和网格
             //}
-            DrawCoordinate();
+            DrawCoordinate();//绘制坐标系和网格
         }
 
         private void ClearAllGraphs()
         {
             cvsMainCanvas.Children.Clear();
         }
-
-
+        /// <summary>
+        /// 显示错误信息
+        /// </summary>
+        /// <param name="text">错误信息</param>
         private void ShowErrorMessage(string text)
         {
             new ErrorMessageBox(text).ShowDialog();
         }
-
-
-
+        
         #region 绘制
 
         private void DrawCoordinate()
         {
             //double  pointWidth=
-            DrawLine(Brushes.Black, 1.5, -cvsMainCanvas.ActualWidth, cc.ToScreenXAxis(), 2 * cvsMainCanvas.ActualWidth, cc.ToScreenXAxis());//X
-            DrawLine(Brushes.Black, 1.5, cc.ToScreenYAxis(), -cvsMainCanvas.ActualHeight, cc.ToScreenYAxis(), 2 * cvsMainCanvas.ActualHeight);//Y
-            List<TextBlock> tbList = new System.Collections.Generic.List<TextBlock>();
-            if (chkShowGrid.IsChecked == true)
+            DrawLine(Brushes.Black, 1.5, -cvsMainCanvas.ActualWidth, cc.ToScreenXAxis(), 
+                2 * cvsMainCanvas.ActualWidth, cc.ToScreenXAxis());//X轴
+            DrawLine(Brushes.Black, 1.5, cc.ToScreenYAxis(), -cvsMainCanvas.ActualHeight, 
+                cc.ToScreenYAxis(), 2 * cvsMainCanvas.ActualHeight);//Y轴
+            List<TextBlock> txtList = new List<TextBlock>();//坐标系文字的集合
+            if (chkShowGrid.IsChecked == true)//如果勾选了“绘制表格”
             {
                 //左边界横坐标
                 double leftLine =
                     Math.Round(cc.ToRealX(-cvsMainCanvas.ActualWidth)
                     / double.Parse(txtVerticalSeparationDistance.Text))
                     * double.Parse(txtVerticalSeparationDistance.Text);
-                //
+                //右边界横坐标
                 double rightLine =
                     Math.Round(cc.ToRealX(2 * cvsMainCanvas.ActualWidth)
                     / double.Parse(txtVerticalSeparationDistance.Text))
                     * double.Parse(txtVerticalSeparationDistance.Text);
-                //Y轴右半部份的
+                //纵向网格
                 for (double i = leftLine; i <= rightLine; i += double.Parse(txtVerticalSeparationDistance.Text))
                 {
                     if (Math.Round(i, 5) != 0)
                     {
                         DrawLine(Brushes.Gray, 1, cc.ToScreenX(i), -cvsMainCanvas.ActualHeight, cc.ToScreenX(i), 2 * cvsMainCanvas.ActualHeight);
-                        tbList.Add(new TextBlock());
-                        tbList[tbList.Count - 1].Text = Math.Round(i, 5).ToString();
-                        tbList[tbList.Count - 1].Margin = new Thickness(cc.ToScreenX(i), cc.ToScreenXAxis() - 15, 0, 0);
-                        cvsMainCanvas.Children.Add(tbList[tbList.Count - 1]);
+                        txtList.Add(new TextBlock());
+                        txtList[txtList.Count - 1].Text = Math.Round(i, 5).ToString();
+                        txtList[txtList.Count - 1].Margin = new Thickness(cc.ToScreenX(i), cc.ToScreenXAxis() - 15, 0, 0);
+                        cvsMainCanvas.Children.Add(txtList[txtList.Count - 1]);
                     }
                 }
-
+                //上边界纵坐标
                 double topLine = Math.Round(cc.ToRealY(-cvsMainCanvas.ActualHeight) / double.Parse(txtHorizontalSeparationDistance.Text)) * double.Parse(txtHorizontalSeparationDistance.Text);
+                //下边界纵坐标
                 double bottomLine = Math.Round(cc.ToRealY(2 * cvsMainCanvas.ActualHeight) / double.Parse(txtHorizontalSeparationDistance.Text)) * double.Parse(txtHorizontalSeparationDistance.Text);
-
+                //横向网格
                 for (double i = bottomLine; i <= topLine; i += double.Parse(txtHorizontalSeparationDistance.Text))
                 {
                     if (Math.Round(i, 5) != 0)
                     {
                         DrawLine(Brushes.Gray, 1, -cvsMainCanvas.ActualWidth, cc.ToScreenY(i), 2 * cvsMainCanvas.ActualWidth, cc.ToScreenY(i));
-                        tbList.Add(new TextBlock());
-                        tbList[tbList.Count - 1].Text = Math.Round(i, 5).ToString();
-                        tbList[tbList.Count - 1].Margin = new Thickness(cc.ToScreenYAxis() + 6, cc.ToScreenY(i), 0, 0);
-                        cvsMainCanvas.Children.Add(tbList[tbList.Count - 1]);
+                        txtList.Add(new TextBlock());
+                        txtList[txtList.Count - 1].Text = Math.Round(i, 5).ToString();
+                        txtList[txtList.Count - 1].Margin = new Thickness(cc.ToScreenYAxis() + 6, cc.ToScreenY(i), 0, 0);
+                        cvsMainCanvas.Children.Add(txtList[txtList.Count - 1]);
                     }
                 }
                 //for (double i = 0 + double.Parse(txtVerticalSeparationDistance.Text); i <= double.Parse(txtCanvasRight.Text); i += double.Parse(txtVerticalSeparationDistance.Text))//Y轴右
@@ -155,10 +157,12 @@ namespace AnalyticGeometry
             }
 
         }
-
+        /// <summary>
+        /// 绘制图像
+        /// </summary>
         private void Draw()
         {
-            if (tabInput.SelectedIndex == 0)
+            if (tabInput.SelectedIndex == 0)//如果选择绘制连点成线
             {
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
@@ -167,9 +171,16 @@ namespace AnalyticGeometry
                 btnParametricOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
+        /// <summary>
+        /// 通过四个坐标参数绘制线段
+        /// </summary>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
         private void DrawLine(double x1, double y1, double x2, double y2)
         {
-            System.Windows.Shapes.Line l = new Line();
+            Line l = new Line();
             l.Stroke = colorPicker.CurrentColor;
             l.StrokeThickness = double.Parse(txtLineThickness.Text);
             l.X1 = x1;
@@ -179,9 +190,14 @@ namespace AnalyticGeometry
             cvsMainCanvas.Children.Add(l);
 
         }
+        /// <summary>
+        /// 通过两个点绘制线段
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
         private void DrawLine(Point p1, Point p2)
         {
-            System.Windows.Shapes.Line l = new Line();
+            Line l = new Line();
             l.Stroke = colorPicker.CurrentColor;
             l.StrokeThickness = double.Parse(txtLineThickness.Text);
             l.X1 = p1.X;
@@ -190,28 +206,50 @@ namespace AnalyticGeometry
             l.Y2 = p2.Y;
             cvsMainCanvas.Children.Add(l);
         }
-        private void DrawLine(SolidColorBrush brush, double tn, double x1, double y1, double x2, double y2)
+        /// <summary>
+        /// 绘制制定颜色和粗细的线段
+        /// </summary>
+        /// <param name="brush">线条颜色</param>
+        /// <param name="thickness">线条粗细</param>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        private void DrawLine(SolidColorBrush brush, double thickness, double x1, double y1, double x2, double y2)
         {
-            System.Windows.Shapes.Line l = new Line();
+            Line l = new Line();
             l.Stroke = brush;
-            l.StrokeThickness = tn;
+            l.StrokeThickness = thickness;
             l.X1 = x1;
             l.X2 = x2;
             l.Y1 = y1;
             l.Y2 = y2;
             cvsMainCanvas.Children.Add(l);
         }
+        /// <summary>
+        /// 绘制圆形
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         private void DrawCricle(double x, double y)
         {
             System.Windows.Shapes.Ellipse e = new Ellipse();
             e.Stroke = colorPicker.CurrentColor;
             e.StrokeThickness = double.Parse(txtLineThickness.Text);
-            e.Margin = new Thickness(x - double.Parse(txtLineThickness.Text) / 2, y - double.Parse(txtLineThickness.Text) / 2, 2 * double.Parse(txtLineThickness.Text), 2 * double.Parse(txtLineThickness.Text));
+            e.Margin = new Thickness(x - double.Parse(txtLineThickness.Text) / 2,//左
+                y - double.Parse(txtLineThickness.Text) / 2, //上
+                2 * double.Parse(txtLineThickness.Text), //右
+                2 * double.Parse(txtLineThickness.Text));//下
             cvsMainCanvas.Children.Add(e);
         }
         #endregion
 
         #region 函数
+        /// <summary>
+        /// 单击绘制函数图像按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FunctionOKBtnClickEventHandler(object sender, EventArgs e)
         {
 
@@ -222,6 +260,7 @@ namespace AnalyticGeometry
             {
                 //  if(chkMultipleFunction.IsChecked==true)
                 // {
+                //把每一行的函数单独绘制
                 foreach (var i in txtFunctionInput.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     functionExpression = Calculate.ReplaceExpressionPreliminary(i, txtFunctionVariable.Text);
@@ -233,63 +272,82 @@ namespace AnalyticGeometry
             {
             }
         }
-
+        /// <summary>
+        /// 绘制函数图象
+        /// </summary>
         private void DrawFunctionGraph()
         {
-            double pre = (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / cvsMainCanvas.ActualWidth * double.Parse(txtFunctionPrecision.Text);
-            List<double> xarray = new List<double>();
+            //
+            double realPrecision = (double.Parse(txtCanvasRight.Text) -  double.Parse(txtCanvasLeft.Text)) //实际宽度
+                / cvsMainCanvas.ActualWidth //实际宽度/屏幕宽度获得比值
+                * double.Parse(txtFunctionPrecision.Text);//每隔x个像素计算一个点坐标
+            //List<double> xarray = new List<double>();
 
-            List<Point> points = new List<Point>();
-            double leftLine = Math.Round(cc.ToRealX(-cvsMainCanvas.ActualWidth) / double.Parse(txtVerticalSeparationDistance.Text)) * double.Parse(txtVerticalSeparationDistance.Text);
-            double rightLine = Math.Round(cc.ToRealX(2 * cvsMainCanvas.ActualWidth) / double.Parse(txtVerticalSeparationDistance.Text)) * double.Parse(txtVerticalSeparationDistance.Text);
-            for (double i = leftLine; i <= rightLine; i += pre)
+            List<Point> points = new List<Point>();//点坐标集合
+            //最左端和最右端的横坐标
+            double leftLine = Math.Round(cc.ToRealX(-cvsMainCanvas.ActualWidth) 
+                / double.Parse(txtVerticalSeparationDistance.Text)) 
+                * double.Parse(txtVerticalSeparationDistance.Text);
+            double rightLine = Math.Round(cc.ToRealX(2 * cvsMainCanvas.ActualWidth) 
+                / double.Parse(txtVerticalSeparationDistance.Text)) 
+                * double.Parse(txtVerticalSeparationDistance.Text);
+            //计算点坐标
+            for (double i = leftLine; i <= rightLine; i += realPrecision)
             {
                 points.Add(new Point(
                     cc.ToScreenX(i),
                     cc.ToScreenY(double.Parse(Calculate.Eval(functionExpression, txtFunctionVariable.Text, i.ToString())))));
             }
-            if (rbtnGraphTypeOfLine.IsChecked == true)
+            if (rbtnGraphTypeOfLine.IsChecked == true)//如果是连线
             {
                 for (int i = 1; i < points.Count; i++)
                 {
-                    if (points[i - 1].Y >= -100 && points[i].Y <= cvsMainCanvas.ActualHeight + 100 && points[i - 1].Y <= cvsMainCanvas.ActualHeight + 100 && points[i].Y >= -100)
+                    //if (points[i - 1].Y >= -100
+                    //    && points[i].Y <= cvsMainCanvas.ActualHeight + 100
+                    //    && points[i - 1].Y <= cvsMainCanvas.ActualHeight + 100
+                    //    && points[i].Y >= -100)
+                    
+                        if (points[i - 1].Y >= -cvsMainCanvas.ActualHeight*4
+                        && points[i].Y <= cvsMainCanvas.ActualHeight*5 
+                        && points[i - 1].Y <= cvsMainCanvas.ActualHeight*5
+                        && points[i].Y >= -cvsMainCanvas.ActualHeight*4)
                     {
+                        //如果这个和前一个点在视图及周围扩展的9*9-1个同样的视图中的话则连接这一个点和上一个点
+                        //此举是为了防止获取到没有定义的点导致错误
                         DrawLine(points[i - 1].X, points[i - 1].Y, points[i].X, points[i].Y);
                     }
 
-                    else if (points[i - 1].Y < cvsMainCanvas.ActualHeight && points[i - 1].Y > 0 && points[i].Y <= 0)
-                    {
-                        DrawLine(points[i - 1].X, points[i - 1].Y, points[i - 1].X, 0);
-                    }
-                    else if (points[i - 1].Y <= 0 && points[i].Y > 0 && points[i].Y < cvsMainCanvas.ActualHeight)
-                    {
-                        DrawLine(points[i].X, 0, points[i].X, points[i].Y);
-                    }
+                    //else if (points[i - 1].Y < cvsMainCanvas.ActualHeight 
+                    //    && points[i - 1].Y > 0 
+                    //    && points[i].Y <= 0)
+                    //{
+                    //    DrawLine(points[i - 1].X, points[i - 1].Y, points[i - 1].X, 0);
+                    //}
+                    //else if (points[i - 1].Y <= 0 
+                    //    && points[i].Y > 0 
+                    //    && points[i].Y < cvsMainCanvas.ActualHeight)
+                    //{
+                    //    DrawLine(points[i].X, 0, points[i].X, points[i].Y);
+                    //}
 
-                    else if (points[i - 1].Y < cvsMainCanvas.ActualHeight && points[i - 1].Y > 0 && points[i].Y > cvsMainCanvas.ActualHeight)
-                    {
-                        DrawLine(points[i - 1].X, points[i - 1].Y, points[i - 1].X, cvsMainCanvas.Height);
-                    }
-                    else if (points[i - 1].Y > cvsMainCanvas.ActualHeight && points[i].Y > 0 && points[i].Y < cvsMainCanvas.ActualHeight)
-                    {
-                        DrawLine(points[i].X, cvsMainCanvas.Height, points[i].X, points[i].Y);
-                    }
+                    //else if (points[i - 1].Y < cvsMainCanvas.ActualHeight && points[i - 1].Y > 0 && points[i].Y > cvsMainCanvas.ActualHeight)
+                    //{
+                    //    DrawLine(points[i - 1].X, points[i - 1].Y, points[i - 1].X, cvsMainCanvas.Height);
+                    //}
+                    //else if (points[i - 1].Y > cvsMainCanvas.ActualHeight && points[i].Y > 0 && points[i].Y < cvsMainCanvas.ActualHeight)
+                    //{
+                    //    DrawLine(points[i].X, cvsMainCanvas.Height, points[i].X, points[i].Y);
+                    //}
 
                 }
             }
 
 
-            else
+            else//如果是画点
             {
                 for (int i = 0; i < points.Count; i++)
                 {
-                    try
-                    {
-                        DrawCricle(points[i].X, points[i].Y);
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    DrawCricle(points[i].X, points[i].Y);
                 }
             }
 
@@ -298,6 +356,11 @@ namespace AnalyticGeometry
         #endregion
 
         #region 参数方程
+        /// <summary>
+        /// 单击绘制参数方程按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ParametricOKBtnClickEventHandler(object sender, EventArgs e)
         {
             Initialize();
@@ -310,12 +373,14 @@ namespace AnalyticGeometry
             catch { }
 
         }
-
+        /// <summary>
+        /// 绘制参数方程
+        /// </summary>
         private void DrawParametricGraph()
         {
             Pen p = new Pen(colorPicker.CurrentColor, int.Parse(txtLineThickness.Text));
             List<Point> points = new List<Point>();
-            for (double i = double.Parse(txtParametricEnd.Text); i <= double.Parse(txtParametricEnd.Text); i += double.Parse(txtParametricPrecision.Text))
+            for (double i = double.Parse(txtParametricStart.Text); i <= double.Parse(txtParametricEnd.Text); i += double.Parse(txtParametricPrecision.Text))
             {
                 points.Add(new Point(
                     cc.ToScreenX(double.Parse(Calculate.Eval(ParametricXExpression, txtParametricParameter.Text, i.ToString()))),
@@ -325,7 +390,16 @@ namespace AnalyticGeometry
             {
                 for (int i = 1; i < points.Count; i++)
                 {
-                    if (points[i - 1].Y >= -100 && points[i].Y <= cvsMainCanvas.ActualHeight + 100 && points[i - 1].Y <= cvsMainCanvas.ActualHeight + 100 && points[i].Y >= -100)
+                    //if (points[i - 1].Y >= -100
+                    //    && points[i].Y <= cvsMainCanvas.ActualHeight + 100
+                    //    && points[i - 1].Y <= cvsMainCanvas.ActualHeight + 100
+                    //    && points[i].Y >= -100)
+
+                    if (points[i - 1].Y >= -cvsMainCanvas.ActualHeight * 4
+                    && points[i].Y <= cvsMainCanvas.ActualHeight * 5
+                    && points[i - 1].Y <= cvsMainCanvas.ActualHeight * 5
+                    && points[i].Y >= -cvsMainCanvas.ActualHeight * 4)
+
                     {
                         DrawLine(points[i - 1].X, points[i - 1].Y, points[i].X, points[i].Y);
                     }
@@ -344,6 +418,11 @@ namespace AnalyticGeometry
 
         #region 限制操作
         Dictionary<TextBox, string> lastString = new Dictionary<TextBox, string>();
+        /// <summary>
+        /// 只允许输入数字
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UniversalTxtEnterOnlyNumberTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
             double tryNum;
@@ -372,7 +451,11 @@ namespace AnalyticGeometry
                 }
             }
         }
-
+        /// <summary>
+        /// 只允许输入正数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UniversalTxtEnterOnlyPositiveNumberTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
             double tryNum;
@@ -402,7 +485,11 @@ namespace AnalyticGeometry
                 }
             }
         }
-
+        /// <summary>
+        /// 只允许输入整数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UniversalTxtEnterOnlyIntegerTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
             if (((TextBox)sender).Text != "")
@@ -432,7 +519,11 @@ namespace AnalyticGeometry
                 }
             }
         }
-
+        /// <summary>
+        /// 不允许输入数字
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UniversalTxtEnterNoNumberTextChangedEventHandler(object sender, TextChangedEventArgs e)
         {
             for (int i = 0; i <= 9; i++)
@@ -449,6 +540,7 @@ namespace AnalyticGeometry
         #endregion
 
         #region 键盘操作
+        
         private void FunctionOKTxtPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
         {
 
@@ -525,7 +617,8 @@ namespace AnalyticGeometry
         }
 
         private void WinLoadedEventHandler(object sender, EventArgs e)
-        {
+        { 
+           
             string tempFileName = System.IO.Path.GetTempFileName();
             using (FileStream fs = new FileStream(tempFileName, FileMode.Create))
             {
@@ -732,7 +825,7 @@ namespace AnalyticGeometry
 
                 Draw();
             }
-           //如果在操作区滚轮
+            //如果在操作区滚轮
             else
             {
                 //如果界面高度足够就不需要滚轮来调节了了
@@ -742,8 +835,8 @@ namespace AnalyticGeometry
                 {
                     if (e.Delta > 0)
                     {
-                      //  Debug.WriteLine();
-                        if (grdSettings.Margin.Top<4)
+                        //  Debug.WriteLine();
+                        if (grdSettings.Margin.Top < 4)
                         {
                             grdSettings.Margin = new Thickness(
                                  grdSettings.Margin.Left,
@@ -755,7 +848,7 @@ namespace AnalyticGeometry
                     else
                     {
                         //Debug.WriteLine("2");
-                        if(this.Height - grdSettings.Margin.Top > 710)
+                        if (this.Height - grdSettings.Margin.Top > 710)
                         {
                             return;
                         }
@@ -764,9 +857,9 @@ namespace AnalyticGeometry
                                   grdSettings.Margin.Top - 8,
                                    grdSettings.Margin.Right,
                                     grdSettings.Margin.Bottom - 8);
-                        
-                        
-                       // if () { }
+
+
+                        // if () { }
                     }
                 }
 
@@ -922,7 +1015,6 @@ namespace AnalyticGeometry
             public int Top;
             public int Right;
             public int Bottom;
-
             public RECT(Int32 left, Int32 top, Int32 right, Int32 bottom)
             {
                 Left = left;
@@ -931,30 +1023,26 @@ namespace AnalyticGeometry
                 Bottom = bottom;
             }
         }
-
-
-
         private void WinSizeChangedEventHandler(object sender, SizeChangedEventArgs e)
         {
             //Debug.WriteLine(this.Height);
             //Debug.WriteLine(grdSettings.Margin.Top);
 
             //如果发现最底端已经到底了，那么要把Margin往下调，也就是底部吸住，直到顶部完全露出来为止。
-           while(this.Height - grdSettings.Margin.Top > 730&& grdSettings.Margin.Top<4)
+            while (this.Height - grdSettings.Margin.Top > 730 && grdSettings.Margin.Top < 4)
             {
-                    grdSettings.Margin = new Thickness(
-                         grdSettings.Margin.Left,
-                          grdSettings.Margin.Top + 1,
-                          
-                grdSettings.Margin.Right,
-                            grdSettings.Margin.Bottom + 1);
+                grdSettings.Margin = new Thickness(
+                     grdSettings.Margin.Left,
+                      grdSettings.Margin.Top + 1,
+
+            grdSettings.Margin.Right,
+                        grdSettings.Margin.Bottom + 1);
                 //Debug.WriteLine("2     " + grdSettings.Margin.Top);
             }
             Initialize();
             //Draw();
 
         }
-
 
         private void ZoomInBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
@@ -1151,19 +1239,39 @@ namespace AnalyticGeometry
 
         }
         #endregion
-
+        #region 按钮操作
+        /// <summary>
+        /// 单击普通计算器按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenOrdinaryCalculatorBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             new OrdinaryCalculator().Show();
         }
+        /// <summary>
+        /// 单击解方程按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenSolveEquationsBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             new SolveEquations().Show();
         }
-        private void ClearAllGraphs(object sender, EventArgs e)
+        /// <summary>
+        /// 单击清空按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClearAllGraphsBtnClickEventHandler(object sender, EventArgs e)
         {
             ClearAllGraphs();
         }
+        /// <summary>
+        /// 单击保存按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SaveGraphAsFiles(object sender, EventArgs e)
         {
             Rect bounds = VisualTreeHelper.GetDescendantBounds(cvsMainCanvas);
@@ -1188,7 +1296,7 @@ namespace AnalyticGeometry
 
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.Filter = "PNG图片（透明背景色）|,*.png";
-                sfd.FileName = DateTime.Now.ToString();
+                sfd.FileName = txtFunctionInput.Text;
                 if (sfd.ShowDialog() == true)
                 {
                     System.IO.File.WriteAllBytes(sfd.FileName, ms.ToArray());
@@ -1199,7 +1307,7 @@ namespace AnalyticGeometry
                 ShowErrorMessage(ex.ToString());
             }
         }
-
+        #endregion
 
     }
 

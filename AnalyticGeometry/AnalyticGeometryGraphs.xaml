@@ -7,7 +7,8 @@
     PreviewMouseDown="WinPreviewMouseDownEventHandler"  
     PreviewMouseWheel="WinMouseWheelEventHandler" 
     SizeChanged="WinSizeChangedEventHandler" 
-    Loaded="WinLoadedEventHandler" Closing="WinClosingEventHandler" 
+    Loaded="WinLoadedEventHandler" 
+    Closing="WinClosingEventHandler" 
     MouseMove="WinMouseMoveEventHandler" 
     PreviewMouseUp="WinMouseUpEventHandler"
     WindowStartupLocation="CenterScreen" 
@@ -62,7 +63,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="y="/>
                             <TextBox x:Name="txtFunctionInput" Grid.Column="2" PreviewKeyDown="FunctionOKTxtPreviewKeyDownEventHandler" VerticalAlignment="Center" AcceptsReturn="True"></TextBox>
-                            <Button Click="FunctionOKBtnClickEventHandler" x:Name="btnFunctionOK" Grid.Column="4"  Content="确定"/>
+                            <Button Click="ParametricOKBtnClickEventHandler" x:Name="btnFunctionOK" Grid.Column="4"  Content="确定"/>
                             <TextBlock Text="绘制精度：" Grid.ColumnSpan="3" Grid.Row="2"/>
                             <TextBox x:Name="txtFunctionPrecision" Grid.Column="4" Grid.Row="2" Text="10" TextChanged="UniversalTxtEnterOnlyIntegerTextChangedEventHandler"></TextBox>
                             <TextBlock Grid.Row="3" Foreground="Gray" Grid.ColumnSpan="3">值低精度高值高速度快<LineBreak/>大导函数图像请降低值</TextBlock>
@@ -164,7 +165,7 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Button Content="保存"  Click="SaveGraphAsFiles"/>
-                            <Button  Content="清空" Grid.Column="6" Click="ClearAllGraphs" />
+                            <Button  Content="清空" Grid.Column="6" Click="ClearAllGraphsBtnClickEventHandler" />
                             <TextBox x:Name="txtCanvasTop" Grid.Column="3" Text="10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler" MaxWidth="40" />
                             <TextBox x:Name="txtCanvasLeft" Grid.Row="3" Text="-10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  MaxWidth="40" Width="40"/>
                             <TextBox x:Name="txtCanvasBottom" MinWidth="28" Grid.Row="6" Grid.Column="3" Text="-10" TextChanged="UniversalTxtEnterOnlyNumberTextChangedEventHandler"  MaxWidth="40"/>
