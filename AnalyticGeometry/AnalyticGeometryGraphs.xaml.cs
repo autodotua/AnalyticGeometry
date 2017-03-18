@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows.Input;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace AnalyticGeometry
 {
@@ -233,13 +234,30 @@ namespace AnalyticGeometry
         /// <param name="y"></param>
         private void DrawCricle(double x, double y)
         {
-            System.Windows.Shapes.Ellipse e = new Ellipse();
+            Ellipse e = new Ellipse();
             e.Stroke = colorPicker.CurrentColor;
             e.StrokeThickness = double.Parse(txtLineThickness.Text);
             e.Margin = new Thickness(x - double.Parse(txtLineThickness.Text) / 2,//左
                 y - double.Parse(txtLineThickness.Text) / 2, //上
                 2 * double.Parse(txtLineThickness.Text), //右
                 2 * double.Parse(txtLineThickness.Text));//下
+            cvsMainCanvas.Children.Add(e);
+        }
+ /// <summary>
+ /// 绘制能够改变线条粗细的圆形
+ /// </summary>
+ /// <param name="x"></param>
+ /// <param name="y"></param>
+ /// <param name="thickness"></param>
+        private void DrawCricle(double x, double y,double thickness)
+        {
+            Ellipse e = new Ellipse();
+            e.Stroke = colorPicker.CurrentColor;
+            e.StrokeThickness = double.Parse(txtLineThickness.Text);
+            e.Margin = new Thickness(x - thickness / 2,//左
+                y - thickness  / 2, //上
+                2 * thickness, //右
+                2 * thickness);//下
             cvsMainCanvas.Children.Add(e);
         }
         #endregion
@@ -263,8 +281,16 @@ namespace AnalyticGeometry
                 //把每一行的函数单独绘制
                 foreach (var i in txtFunctionInput.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    functionExpression = Calculate.ReplaceExpressionPreliminary(i, txtFunctionVariable.Text);
-                    DrawFunctionGraph();
+                    Regex rgxPoint = new Regex(@"[0-9]+\.?[0-9]*,[0-9]+\.?[0-9]*");//坐标点类似“3.4,2.4”的正则
+                    if (rgxPoint.IsMatch(i))//如果是个点坐标
+                    {
+                        DrawCricle(cc.ToScreenX(double.Parse(i.Split(new char[] { ',' })[0])), cc.ToScreenY(double.Parse(i.Split(new char[] { ',' })[1])),double.Parse(txtLineThickness.Text)*2);
+                    }
+                    else//如果是个函数
+                    {
+                        functionExpression = Calculate.ReplaceExpressionPreliminary(i, txtFunctionVariable.Text);
+                        DrawFunctionGraph();
+                    }
                 }
                 //  }
             }
