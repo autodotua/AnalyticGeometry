@@ -334,7 +334,7 @@
             </Grid>
         </Grid>
 
-        <Canvas    x:Name="cvsMainCanvas" Grid.Column="1" Panel.ZIndex="-1"    IsManipulationEnabled="True" >
+        <Canvas    x:Name="cvsMainCanvas" Grid.Column="1" Panel.ZIndex="-1"   >
             
             <!--<ZoomableCanvas.RenderTransform>
                 <MatrixTransform/>

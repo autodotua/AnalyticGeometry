@@ -50,11 +50,10 @@ namespace AnalyticGeometry
                 grdMain.ActualHeight, double.Parse(txtCanvasLeft.Text), 
                 double.Parse(txtCanvasRight.Text), double.Parse(txtCanvasTop.Text), 
                 double.Parse(txtCanvasBottom.Text));//实例化一个自定义坐标系
-            RefreshCoordinateGrid();//重置网格间距
-            //if (chkMultipleFunction.IsChecked == true)
-            //{
+            CalculateGridSpacing();//重置网格间距
+            
             ClearAllGraphs();//清空坐标系和网格
-            //}
+          
             DrawCoordinate();//绘制坐标系和网格
         }
 
@@ -566,7 +565,11 @@ namespace AnalyticGeometry
         #endregion
 
         #region 键盘操作
-        
+        /// <summary>
+        /// 函数图象输入框按下按键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FunctionOKTxtPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
         {
 
@@ -587,7 +590,11 @@ namespace AnalyticGeometry
                 //}
             }
         }
-
+        /// <summary>
+        /// 参数方程X输入框按下按键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TxtParametricXBtnPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
@@ -599,7 +606,11 @@ namespace AnalyticGeometry
                 txtParametricY.Focus();
             }
         }
-
+        /// <summary>
+        /// 参数方程Y输入框按下按键
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TxtParametricYBtnPreviewKeyDownEventHandler(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
@@ -615,6 +626,11 @@ namespace AnalyticGeometry
         #endregion
 
         #region 配置项
+        /// <summary>
+        /// 读注册表
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         private string GetConfig(string key)
         {
             RegistryKey rk = Registry.CurrentUser.CreateSubKey("software\\AutodotuaSoftware\\Analytic-Geometry");
@@ -628,7 +644,11 @@ namespace AnalyticGeometry
             }
 
         }
-
+        /// <summary>
+        /// 写注册表
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         private void SetConfig(string key, string value)
         {
             RegistryKey rk = Registry.CurrentUser.CreateSubKey("software\\AutodotuaSoftware\\Analytic-Geometry");
@@ -641,18 +661,28 @@ namespace AnalyticGeometry
 
             }
         }
-
+        /// <summary>
+        /// 启动程序后要做的事
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WinLoadedEventHandler(object sender, EventArgs e)
         { 
-           
+           //设置窗体图标
             string tempFileName = System.IO.Path.GetTempFileName();
             using (FileStream fs = new FileStream(tempFileName, FileMode.Create))
             {
                 Properties.Resources.icon.Save(fs);
             }
             this.Icon = new BitmapImage(new Uri(tempFileName));
+
+            //让函数图象输入框获取焦点
             txtFunctionInput.Focus();
+
+            //实例化PresentationSource为获取DPI做准备
             ps = PresentationSource.FromVisual(this);
+
+            //逐一获取配置项并应用到控件
             if (GetConfig("haveOpened") == "1")
             {
 
@@ -693,9 +723,11 @@ namespace AnalyticGeometry
                     rbtnGraphTypeOfLine.IsChecked = false;
                 }
             }
-            Draw();
+            //显示坐标系
+            Initialize();
+           // Draw();
         }
-
+        //关闭程序后保存设置项
         private void WinClosingEventHandler(object sender, CancelEventArgs e)
         {
             SetConfig("txtGraphColor", txtGraphColor.Text);
@@ -739,7 +771,11 @@ namespace AnalyticGeometry
             }
             SetConfig("haveOpened", "1");
         }
-
+        /// <summary>
+        /// 单击恢复初始化按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DelRegeditItems(object sender, EventArgs e)
         {
             RegistryKey rk = Registry.CurrentUser;
@@ -747,6 +783,7 @@ namespace AnalyticGeometry
             {
                 rk.DeleteSubKey("software\\AutodotuaSoftware\\Analytic-Geometry");
                 string strAppFileName = Process.GetCurrentProcess().MainModule.FileName;
+                //重启
                 Process myNewProcess = new Process();
                 myNewProcess.StartInfo.FileName = strAppFileName;
                 myNewProcess.StartInfo.WorkingDirectory = Process.GetCurrentProcess().MainModule.FileName;
@@ -769,6 +806,11 @@ namespace AnalyticGeometry
         Point startMousePoint;
         double startCvWidth;
         double startCvHeight;
+        /// <summary>
+        /// 按下左移按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MoveCoordinateToLeftBtnClickEventHandler(object sender, EventArgs e)
         {
             string temp = txtCanvasLeft.Text;
@@ -781,7 +823,11 @@ namespace AnalyticGeometry
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
-
+        /// <summary>
+        /// 按下上移按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MoveCoordinateToUpBtnClickEventHandler(object sender, EventArgs e)
         {
             string temp = txtCanvasTop.Text;
@@ -794,7 +840,11 @@ namespace AnalyticGeometry
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
-
+        /// <summary>
+        /// 按下右移按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MoveCoordinateToRightBtnClickEventHandler(object sender, EventArgs e)
         {
             string temp = txtCanvasLeft.Text;
@@ -807,7 +857,11 @@ namespace AnalyticGeometry
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
-
+        /// <summary>
+        /// 按下下移按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MoveCoordinateToDownBtnClickEventHandler(object sender, EventArgs e)
         {
             string temp = txtCanvasTop.Text;
@@ -820,7 +874,11 @@ namespace AnalyticGeometry
                 btnFunctionOK.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
         }
-
+        /// <summary>
+        /// 鼠标滚轮缩放
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WinMouseWheelEventHandler(object sender, MouseWheelEventArgs e)
         {
             //如果是在画布部分滚轮
@@ -829,23 +887,23 @@ namespace AnalyticGeometry
 
                 if (e.Delta > 0)
                 {
-                    string temp1 = txtCanvasTop.Text;
-                    string temp2 = txtCanvasLeft.Text;
+                    string rawTop = txtCanvasTop.Text;
+                    string rawLeft = txtCanvasLeft.Text;
                     txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) - (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-                    txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) + (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
+                    txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) + (double.Parse(rawTop) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
                     txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
-                    txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
+                    txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(rawLeft)) / 5), 2).ToString();
 
 
                 }
                 else
                 {
-                    string temp1 = txtCanvasTop.Text;
-                    string temp2 = txtCanvasLeft.Text;
+                    string rawTemp = txtCanvasTop.Text;
+                    string rawLeft = txtCanvasLeft.Text;
                     txtCanvasTop.Text = Math.Round((double.Parse(txtCanvasTop.Text) + (double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
-                    txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) - (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
+                    txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) - (double.Parse(rawTemp) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
                     txtCanvasLeft.Text = Math.Round((double.Parse(txtCanvasLeft.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / 5), 2).ToString();
-                    txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
+                    txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(rawLeft)) / 5), 2).ToString();
 
                 }
 
@@ -859,7 +917,7 @@ namespace AnalyticGeometry
                     return;
                 else
                 {
-                    if (e.Delta > 0)
+                    if (e.Delta > 0)//向上滚
                     {
                         //  Debug.WriteLine();
                         if (grdSettings.Margin.Top < 4)
@@ -871,11 +929,12 @@ namespace AnalyticGeometry
                                     grdSettings.Margin.Bottom + 8);
                         }
                     }
-                    else
+                    else//向下滚
                     {
                         //Debug.WriteLine("2");
                         if (this.Height - grdSettings.Margin.Top > 710)
                         {
+                            //如果滚到底了，下面没东西好显示了
                             return;
                         }
                         grdSettings.Margin = new Thickness(
@@ -892,8 +951,10 @@ namespace AnalyticGeometry
             }
 
         }
-
-        private void RefreshCoordinateGrid()
+        /// <summary>
+        /// 如果开启了自动网格那么久自动计算网格间距
+        /// </summary>
+        private void CalculateGridSpacing()
         {
             try
             {
@@ -945,94 +1006,28 @@ namespace AnalyticGeometry
                 txtCanvasBottom.Text = "-10";
             }
         }
-
+        /// <summary>
+        /// 单击方形网格按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MakeGridSquare(object sender, EventArgs e)
         {
             double proportion;
             double middle;
-            middle = 0.5 * (double.Parse(txtCanvasTop.Text) + double.Parse(txtCanvasBottom.Text));
-            proportion = (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / cvsMainCanvas.ActualWidth;
+            middle = 0.5 * (double.Parse(txtCanvasTop.Text) + double.Parse(txtCanvasBottom.Text));//上下的中心点
+            proportion = (double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text)) / cvsMainCanvas.ActualWidth;//计算比例
             txtCanvasBottom.Text = (middle - 0.5 * proportion * cvsMainCanvas.ActualHeight).ToString();
             txtCanvasTop.Text = (middle + 0.5 * proportion * cvsMainCanvas.ActualHeight).ToString();
-            RefreshCoordinateGrid();
+            CalculateGridSpacing();
             ClearAllGraphs();
             Initialize();
             Draw();
         }
 
-        private void WinPreviewMouseDownEventHandler(object sender, MouseButtonEventArgs e)
-        {
-            if (e.GetPosition(cvsMainCanvas).X > 0 && e.GetPosition(cvsMainCanvas).X < cvsMainCanvas.ActualWidth && e.GetPosition(cvsMainCanvas).Y > 0 && e.GetPosition(cvsMainCanvas).Y < cvsMainCanvas.ActualHeight)
-            {
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-                    IsMouseDown = true;
-                    mousePoint = e.GetPosition(this);
-                    startMousePoint = mousePoint;
-                    startCvWidth = cvsMainCanvas.ActualWidth;
-                    startCvHeight = cvsMainCanvas.ActualHeight;
-                }
-            }
-        }
-
-        private void WinMouseMoveEventHandler(object sender, MouseEventArgs e)
-        {
-
-            if (IsMouseDown)
-            {
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
-
-                    RECT rect = new RECT(
-                        (int)((this.Left + grdMain.ColumnDefinitions[0].ActualWidth) * ps.CompositionTarget.TransformToDevice.M11) + 1,
-                        (int)(this.Top * ps.CompositionTarget.TransformToDevice.M11) + 1,
-                        (int)((this.Left + this.ActualWidth) * ps.CompositionTarget.TransformToDevice.M11) - 1,
-                        (int)((this.ActualHeight + this.Top) * ps.CompositionTarget.TransformToDevice.M11) - 1
-                        );
-                    ClipCursor(ref rect);
-
-
-
-                    Point theMousePoint = e.GetPosition(this);
-                    // if (theMousePoint.X > cv.Margin.Left && theMousePoint.X < cv.Margin.Left + cv.ActualWidth && theMousePoint.Y > cv.Margin.Top && theMousePoint.Y < cv.Margin.Top+cv.ActualWidth)
-                    //   {
-                    //if (theMousePoint.X > 242)
-                    //{
-                    cvsMainCanvas.Margin = new Thickness(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X), cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y), -(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X)), -(cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y)));
-                    mousePoint = theMousePoint;
-                    //}
-                    //   }
-                }
-            }
-        }
-
-
-        private void WinMouseUpEventHandler(object sender, MouseButtonEventArgs e)
-        {
-            if (IsMouseDown)
-            {
-
-                IsMouseDown = false;
-
-                double realWidth = double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text);
-                double realHeight = double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text);
-
-                txtCanvasLeft.Text = (double.Parse(txtCanvasLeft.Text) - realWidth * (e.GetPosition(this).X - startMousePoint.X) / startCvWidth).ToString();
-                txtCanvasRight.Text = (double.Parse(txtCanvasRight.Text) - realWidth * (e.GetPosition(this).X - startMousePoint.X) / startCvWidth).ToString();
-                txtCanvasTop.Text = (double.Parse(txtCanvasTop.Text) + realHeight * (e.GetPosition(this).Y - startMousePoint.Y) / startCvHeight).ToString();
-                txtCanvasBottom.Text = (double.Parse(txtCanvasBottom.Text) + realHeight * (e.GetPosition(this).Y - startMousePoint.Y) / startCvHeight).ToString();
-
-                cvsMainCanvas.Margin = new Thickness(0);
-                RECT rect = new RECT(0, 0, (int)(SystemParameters.PrimaryScreenWidth * ps.CompositionTarget.TransformToDevice.M11), (int)(SystemParameters.PrimaryScreenHeight * ps.CompositionTarget.TransformToDevice.M11));
-                ClipCursor(ref rect);
-
-
-                Draw();
-
-            }
-        }
 
         [DllImport("user32.dll")]
+        //限制鼠标在一个矩形区域内
         static extern bool ClipCursor(ref RECT lpRect);
 
         public struct RECT
@@ -1049,6 +1044,105 @@ namespace AnalyticGeometry
                 Bottom = bottom;
             }
         }
+        RECT rect;
+        /// <summary>
+        /// 在窗体上按下鼠标事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WinPreviewMouseDownEventHandler(object sender, MouseButtonEventArgs e)
+        {
+            if (e.GetPosition(cvsMainCanvas).X > 0 
+                && e.GetPosition(cvsMainCanvas).X < cvsMainCanvas.ActualWidth 
+                && e.GetPosition(cvsMainCanvas).Y > 0 
+                && e.GetPosition(cvsMainCanvas).Y < cvsMainCanvas.ActualHeight)//如果实在绘图区域按下的
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    IsMouseDown = true;
+                    mousePoint = e.GetPosition(this);//记录鼠标按下的位置
+                    startMousePoint = mousePoint;
+                    startCvWidth = cvsMainCanvas.ActualWidth;
+                    startCvHeight = cvsMainCanvas.ActualHeight;
+                    //记录绘图区域的上下左右相对于屏幕左上角的绝对坐标
+                    rect = new RECT(
+                (int)((this.Left + grdMain.ColumnDefinitions[0].ActualWidth) * ps.CompositionTarget.TransformToDevice.M11) + 1,
+                (int)(this.Top * ps.CompositionTarget.TransformToDevice.M11) + 1,
+                (int)((this.Left + this.ActualWidth) * ps.CompositionTarget.TransformToDevice.M11) - 1,
+                (int)((this.ActualHeight + this.Top) * ps.CompositionTarget.TransformToDevice.M11) - 1
+                );
+                }
+            }
+        }
+        /// <summary>
+        /// 窗体上的鼠标移动事件，即拖放画面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WinMouseMoveEventHandler(object sender, MouseEventArgs e)
+        {
+
+            if (IsMouseDown)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                //    Debug.Write(rect.Left+"  ");
+                //    Debug.Write(rect.Right + "  ");
+                //    Debug.Write(rect.Top + "  ");
+                //    Debug.WriteLine(rect.Bottom);
+                    ClipCursor(ref rect);//把鼠标限制在绘图区域内
+                    
+                    Point theMousePoint = e.GetPosition(this);
+                    // if (theMousePoint.X > cv.Margin.Left && theMousePoint.X < cv.Margin.Left + cv.ActualWidth && theMousePoint.Y > cv.Margin.Top && theMousePoint.Y < cv.Margin.Top+cv.ActualWidth)
+                    //   {
+                    //if (theMousePoint.X > 242)
+                    //{
+                    cvsMainCanvas.Margin = new Thickness(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X), 
+                        cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y),
+                        -(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X)), 
+                        -(cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y)));
+                    mousePoint = theMousePoint;
+                    //}
+                    //   }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 窗体上的鼠标抬起事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WinMouseUpEventHandler(object sender, MouseButtonEventArgs e)
+        {
+            if (IsMouseDown)//如果是拖放完成
+            {
+
+                IsMouseDown = false;
+
+                double realWidth = double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text);
+                double realHeight = double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text);
+                //应用当前坐标到控件
+                txtCanvasLeft.Text = (double.Parse(txtCanvasLeft.Text) - realWidth * (e.GetPosition(this).X - startMousePoint.X) / startCvWidth).ToString();
+                txtCanvasRight.Text = (double.Parse(txtCanvasRight.Text) - realWidth * (e.GetPosition(this).X - startMousePoint.X) / startCvWidth).ToString();
+                txtCanvasTop.Text = (double.Parse(txtCanvasTop.Text) + realHeight * (e.GetPosition(this).Y - startMousePoint.Y) / startCvHeight).ToString();
+                txtCanvasBottom.Text = (double.Parse(txtCanvasBottom.Text) + realHeight * (e.GetPosition(this).Y - startMousePoint.Y) / startCvHeight).ToString();
+
+                cvsMainCanvas.Margin = new Thickness(0);
+                //恢复对 鼠标的限制
+                RECT rect = new RECT(0, 0, (int)(SystemParameters.PrimaryScreenWidth * ps.CompositionTarget.TransformToDevice.M11), (int)(SystemParameters.PrimaryScreenHeight * ps.CompositionTarget.TransformToDevice.M11));
+                ClipCursor(ref rect);
+                
+                Draw();
+
+            }
+        }
+
+   /// <summary>
+   /// 窗体大小改变事件
+   /// </summary>
+   /// <param name="sender"></param>
+   /// <param name="e"></param>
         private void WinSizeChangedEventHandler(object sender, SizeChangedEventArgs e)
         {
             //Debug.WriteLine(this.Height);
@@ -1069,7 +1163,11 @@ namespace AnalyticGeometry
             //Draw();
 
         }
-
+        /// <summary>
+        /// 单击放大按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ZoomInBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasRight.Text;
@@ -1080,7 +1178,11 @@ namespace AnalyticGeometry
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
             Draw();
         }
-
+        /// <summary>
+        /// 单击缩小按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ZoomOutBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
@@ -1091,7 +1193,11 @@ namespace AnalyticGeometry
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) + (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
             Draw();
         }
-
+        /// <summary>
+        /// 单击拉伸高度按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ZoomInHeightBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
@@ -1100,7 +1206,11 @@ namespace AnalyticGeometry
             txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) + (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
             Draw();
         }
-
+        /// <summary>
+        /// 单击收缩高度按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ZoomOutHeightBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
@@ -1109,7 +1219,11 @@ namespace AnalyticGeometry
             txtCanvasBottom.Text = Math.Round((double.Parse(txtCanvasBottom.Text) - (double.Parse(temp1) - double.Parse(txtCanvasBottom.Text)) / 5), 2).ToString();
             Draw();
         }
-
+        /// <summary>
+        /// 单击拉伸宽度按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ZoomInWidthBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
@@ -1118,7 +1232,11 @@ namespace AnalyticGeometry
             txtCanvasRight.Text = Math.Round((double.Parse(txtCanvasRight.Text) - (double.Parse(txtCanvasRight.Text) - double.Parse(temp2)) / 5), 2).ToString();
             Draw();
         }
-
+        /// <summary>
+        /// 单击收缩宽度按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ZoomOutWidthBtnClickEventHandler(object sender, RoutedEventArgs e)
         {
             string temp1 = txtCanvasTop.Text;
@@ -1130,6 +1248,11 @@ namespace AnalyticGeometry
 
 
         #endregion
+        /// <summary>
+        /// 单击显示绘图类型帮助按钮事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ShowGraphTypeHelpBtnClickEventHandler(object sender, EventArgs e)
         {
             new PromptMessageBox(@"连点成线：适用于大多数图像
@@ -1144,24 +1267,42 @@ namespace AnalyticGeometry
         double dblRawBottom;
         double dblRawCenterX;
         double dblRawCenterY;
-        bool blnScaleInsteadOfMove = false;
-        // int step = 0;
+        bool blnScaleInsteadOfMove = false;//是否曾经进行过双指缩放
+        /// <summary>
+        /// 开始手势操作事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WinManipulationStartingEventHandler(object sender, ManipulationStartingEventArgs e)
+        {
+            dblRawTop = double.Parse(txtCanvasTop.Text);
+            dblRawLeft = double.Parse(txtCanvasLeft.Text);
+            dblRawRight = double.Parse(txtCanvasRight.Text);
+            dblRawBottom = double.Parse(txtCanvasBottom.Text);
+            dblRawCenterX = 0.5 * (dblRawLeft + dblRawRight);
+            dblRawCenterY = 0.5 * (dblRawTop + dblRawBottom);
+            e.ManipulationContainer = cvsMainCanvas;
+            e.Mode = ManipulationModes.All;
+            //Debug.WriteLine("start");
+            blnScaleInsteadOfMove = false;
+        }
+        /// <summary>
+        /// 进行手势操作事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WinManipulationDeltaEventHandler(object sender, ManipulationDeltaEventArgs e)
         {
-            //step++;
-            // if (e.DeltaManipulation==ManipulationDelta.)
-            FrameworkElement element = (FrameworkElement)e.Source;
-            // if(step%10==0)
+            FrameworkElement element = (FrameworkElement)e.Source;//设定元素
             try
             {
-                Matrix matrix = ((MatrixTransform)element.RenderTransform).Matrix;
-                var deltaManipulation = e.CumulativeManipulation;
+                Matrix matrix = ((MatrixTransform)element.RenderTransform).Matrix;//实例化一个向量坐标系
+                var deltaManipulation = e.CumulativeManipulation;//获取手势该变量
 
-                Point center = new Point(element.ActualWidth / 2, element.ActualHeight / 2);
-                // Debug.WriteLine(deltaManipulation.Translation.Length);
-                double scale = 1 / (deltaManipulation.Scale.Length / Math.Sqrt(2));
-                // Debug.WriteLine(scale);
-                //cvsMainCanvas.Height = cvsMainCanvas.Height * scale;
+                Point center = new Point(element.ActualWidth / 2, element.ActualHeight / 2);//获取中心点坐标
+
+                double scale = 1 / (deltaManipulation.Scale.Length / Math.Sqrt(2));//获取双指缩放比例
+
 
                 //txtCanvasTop.Text = Math.Round((double.Parse(rawTop) + (double.Parse(rawTop) - double.Parse(rawBottom)) *(scale-1)), 2).ToString();
                 //txtCanvasBottom.Text = Math.Round((double.Parse(rawBottom) - (double.Parse(rawTop) - double.Parse(rawBottom)) * (scale - 1)), 2).ToString();
@@ -1173,37 +1314,22 @@ namespace AnalyticGeometry
                 //}
 
 
-
-                if (intFingerMount == 1 && blnScaleInsteadOfMove == false)
+               
+                if (intFingerMount == 1 && blnScaleInsteadOfMove == false)//如果只有一根手指在触摸而且一直只有一根手指
                 {
+                   // i++;
+                 
+                    //txtCanvasLeft.Text = (dblRawLeft - (deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth) * (dblRawRight - dblRawLeft)).ToString();
+                    //txtCanvasRight.Text = (dblRawRight - (deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth) * (dblRawRight - dblRawLeft)).ToString();
+                    //txtCanvasBottom.Text = (dblRawBottom + (deltaManipulation.Translation.Y / cvsMainCanvas.ActualHeight) * (dblRawTop - dblRawBottom)).ToString();
+                    //txtCanvasTop.Text = (dblRawTop + (deltaManipulation.Translation.Y / cvsMainCanvas.ActualHeight) * (dblRawTop - dblRawBottom)).ToString();
+                    //Debug.WriteLine((deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth));
 
-                    //  RECT rect = new RECT(
-                    //      (int)((this.Left + grdMain.ColumnDefinitions[0].ActualWidth) * ps.CompositionTarget.TransformToDevice.M11) + 1,
-                    //      (int)(this.Top * ps.CompositionTarget.TransformToDevice.M11) + 1,
-                    //      (int)((this.Left + this.ActualWidth) * ps.CompositionTarget.TransformToDevice.M11) - 1,
-                    //      (int)((this.ActualHeight + this.Top) * ps.CompositionTarget.TransformToDevice.M11) - 1
-                    //      );
-                    //  ClipCursor(ref rect);
-                    //  Point theMousePoint = new Point(deltaManipulation.Translation.X, deltaManipulation.Translation.Y);
-                    //  // if (theMousePoint.X > cv.Margin.Left && theMousePoint.X < cv.Margin.Left + cv.ActualWidth && theMousePoint.Y > cv.Margin.Top && theMousePoint.Y < cv.Margin.Top+cv.ActualWidth)
-                    //  //   {
-                    //  //if (theMousePoint.X > 242)
-                    //  // {
-                    //  // Debug.WriteLine(deltaManipulation.Translation.X);
-                    ////  Debug.WriteLine(DateTime.Now.Millisecond);
-                    //      cvsMainCanvas.Margin = new Thickness(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X), 
-                    //          cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y), 
-                    //          -(cvsMainCanvas.Margin.Left - (mousePoint.X - theMousePoint.X)),
-                    //          -(cvsMainCanvas.Margin.Top - (mousePoint.Y - theMousePoint.Y)));
-                    //      mousePoint = theMousePoint;
-
-                    //} 
-                    // Debug.WriteLine(1);
-                    txtCanvasLeft.Text = (dblRawLeft - (deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth) * (dblRawRight - dblRawLeft)).ToString();
-                    txtCanvasRight.Text = (dblRawRight - (deltaManipulation.Translation.X / cvsMainCanvas.ActualWidth) * (dblRawRight - dblRawLeft)).ToString();
-
-                    txtCanvasBottom.Text = (dblRawBottom + (deltaManipulation.Translation.Y / cvsMainCanvas.ActualHeight) * (dblRawTop - dblRawBottom)).ToString();
-                    txtCanvasTop.Text = (dblRawTop + (deltaManipulation.Translation.Y / cvsMainCanvas.ActualHeight) * (dblRawTop - dblRawBottom)).ToString();
+                    cvsMainCanvas.Margin = new Thickness(
+                        cvsMainCanvas.Margin.Left + (deltaManipulation.Translation.X ),
+                        cvsMainCanvas.Margin.Top + (deltaManipulation.Translation.Y),
+                        -(cvsMainCanvas.Margin.Left + (deltaManipulation.Translation.X )),
+                        -(cvsMainCanvas.Margin.Top + (deltaManipulation.Translation.Y )));
                 }
                 else if (intFingerMount == 2)
                 {
@@ -1211,15 +1337,15 @@ namespace AnalyticGeometry
                     //Debug.WriteLine(2);
                     txtCanvasLeft.Text = (dblRawCenterX - scale * (dblRawRight - dblRawLeft) / 2).ToString();
                     txtCanvasRight.Text = (dblRawCenterX + scale * (dblRawRight - dblRawLeft) / 2).ToString();
-
                     txtCanvasBottom.Text = (dblRawCenterY - scale * (dblRawTop - dblRawBottom) / 2).ToString();
                     txtCanvasTop.Text = (dblRawCenterY + scale * (dblRawTop - dblRawBottom) / 2).ToString();
+                    Initialize();
                 }
 
 
                 //Stopwatch sw = new Stopwatch();
                 // sw.Start();
-                Initialize();
+                //Initialize();
                 // sw.Stop();
                 //  sw.Reset();
                 //  Debug.WriteLine(sw.ElapsedMilliseconds);
@@ -1230,40 +1356,67 @@ namespace AnalyticGeometry
             //center = matrix.Transform(center);
             //matrix.ScaleAt(deltaManipulation.Scale.X, deltaManipulation.Scale.Y, center.X, center.Y);
         }
-
-        private void WinManipulationStartingEventHandler(object sender, ManipulationStartingEventArgs e)
-        {
-            dblRawTop = double.Parse(txtCanvasTop.Text);
-            dblRawLeft = double.Parse(txtCanvasLeft.Text);
-            dblRawRight = double.Parse(txtCanvasRight.Text);
-            dblRawBottom = double.Parse(txtCanvasBottom.Text);
-            dblRawCenterX = 0.5 * (dblRawLeft + dblRawRight);
-            dblRawCenterY = 0.5 * (dblRawTop + dblRawBottom);
-            e.ManipulationContainer = cvsMainCanvas;
-            e.Mode = ManipulationModes.All;
-            Debug.WriteLine("start")
- ; blnScaleInsteadOfMove = false;
-        }
-
+        /// <summary>
+        /// 结束手势操作事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WinManipulationCompletedEventHandler(object sender, ManipulationCompletedEventArgs e)
         {
-            Draw();
+            //Debug.WriteLine("end");
         }
 
-        private void WinTouchUpEventHandler(object sender, TouchEventArgs e)
-        {
-            //  sleep(200);
-            intFingerMount--;
-            //enableOrDisableManipulation();
-
-        }
-
+        Point startTouchPoint;//手指按下去的时候的坐标
+        /// <summary>
+        /// 手指按下事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WinTouchDownEventHandler(object sender, TouchEventArgs e)
         {
+            if (intFingerMount == 0)//如果第一次按下
+            {
+                startTouchPoint = e.GetTouchPoint(this).Position;
+                startCvWidth = cvsMainCanvas.ActualWidth;
+                startCvHeight = cvsMainCanvas.ActualHeight;
+            }
+
             intFingerMount++;
             //enableOrDisableManipulation();
 
         }
+        /// <summary>
+        /// 手指抬起事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WinTouchUpEventHandler(object sender, TouchEventArgs e)
+        {
+
+
+            //  sleep(200);
+            intFingerMount--;
+            //enableOrDisableManipulation();
+
+            if(intFingerMount==0)//如果所有手指离开屏幕
+            {
+                if (!blnScaleInsteadOfMove)
+                {
+                    double realWidth = double.Parse(txtCanvasRight.Text) - double.Parse(txtCanvasLeft.Text);
+                    double realHeight = double.Parse(txtCanvasTop.Text) - double.Parse(txtCanvasBottom.Text);
+                    //Debug.WriteLine(e.GetTouchPoint(this).Position.X);
+                    txtCanvasLeft.Text = (double.Parse(txtCanvasLeft.Text) - realWidth * (e.GetTouchPoint(this).Position.X - startTouchPoint.X) / startCvWidth).ToString();
+                    txtCanvasRight.Text = (double.Parse(txtCanvasRight.Text) - realWidth * (e.GetTouchPoint(this).Position.X - startTouchPoint.X) / startCvWidth).ToString();
+                    txtCanvasTop.Text = (double.Parse(txtCanvasTop.Text) + realHeight * (e.GetTouchPoint(this).Position.Y - startTouchPoint.Y) / startCvHeight).ToString();
+                    txtCanvasBottom.Text = (double.Parse(txtCanvasBottom.Text) + realHeight * (e.GetTouchPoint(this).Position.Y - startTouchPoint.Y) / startCvHeight).ToString();
+                    cvsMainCanvas.Margin = new Thickness(0);
+                }
+                Draw();
+            }
+
+        }
+       
+       
         #endregion
         #region 按钮操作
         /// <summary>
