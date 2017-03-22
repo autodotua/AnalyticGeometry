@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns:CustomWPFColorPicker="clr-namespace:CustomWPFColorPicker;assembly=CustomWPFColorPicker"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="AnalyticGeometry.AnalyticGeometryGraphs"
-      Title="解析几何图像" Height="730" Width="960"
+      Title="解析几何图像" Height="770" Width="960"
     PreviewMouseDown="WinPreviewMouseDownEventHandler"  
     PreviewMouseWheel="WinMouseWheelEventHandler" 
     SizeChanged="WinSizeChangedEventHandler" 
@@ -41,6 +41,8 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="8"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TabControl x:Name="tabInput" BorderThickness="0"  >
                     <TabItem Header="函数"  >
@@ -67,7 +69,7 @@
                             <TextBlock Text="绘制精度：" Grid.ColumnSpan="3" Grid.Row="2"/>
                             <TextBox x:Name="txtFunctionPrecision" Grid.Column="4" Grid.Row="2" Text="10" TextChanged="UniversalTxtEnterOnlyIntegerTextChangedEventHandler"></TextBox>
                             <TextBlock Grid.Row="3" Foreground="Gray" Grid.ColumnSpan="3">值低精度高值高速度快<LineBreak/>斜率大的图像请降低值</TextBlock>
-                            <TextBlock Grid.ColumnSpan="3" Grid.Row="5">参数：</TextBlock>
+                            <TextBlock Grid.ColumnSpan="3" Grid.Row="5">变量：</TextBlock>
                             <TextBox x:Name="txtFunctionVariable" Grid.Column="4" Grid.Row="5" Text="x" TextChanged="UniversalTxtEnterNoNumberTextChangedEventHandler" ></TextBox>
                         </Grid>
                     </TabItem>
@@ -316,7 +318,7 @@
                         <CustomWPFColorPicker:ColorPickerControlView x:Name="colorPicker" Grid.Column="2" Grid.Row="3" CurrentColor="Red" />
                     </Grid>
                 </GroupBox>
-                <Grid Grid.Row="10">
+                <Grid Grid.Row="12">
                     
                      <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/> 
@@ -330,7 +332,24 @@
                     <Button Click="OpenOrdinaryCalculatorBtnClickEventHandler" Grid.Column="4">普通计算器</Button>
 
                 </Grid>
-               
+
+                <GroupBox Grid.Row="10" Header="计算引擎" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="4"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton x:Name="rbtnCalculateType1">JS</RadioButton>
+                        <RadioButton x:Name="rbtnCalculateType2" Grid.Column="2">master</RadioButton>
+                        <RadioButton x:Name="rbtnCalculateType3" Grid.Column="4">KvanTTT</RadioButton>
+                        <Button Grid.Column="6" Click="btnCalculateTypeClickEventHandler">帮助</Button>
+                    </Grid>
+                </GroupBox>
             </Grid>
         </Grid>
 

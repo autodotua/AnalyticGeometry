@@ -23,7 +23,7 @@ namespace AnalyticGeometry
             script.Language = "JavaScript";
             try
             {
-                
+               // return (new SimpleExpressionEvaluator.ExpressionEvaluator().Evaluate(ReplaceExpressionWithArguement(expression, argument, num))).ToString();
                 return script.Eval(ReplaceExpressionWithArguement(expression, argument, num)).ToString();
             }
             catch (Exception)
@@ -44,6 +44,7 @@ namespace AnalyticGeometry
             
             try
             {
+              // return (new SimpleExpressionEvaluator.ExpressionEvaluator().Evaluate(expression)).ToString();
                 return script.Eval(ReplaceExpression(expression)).ToString();
             }
             catch (Exception)

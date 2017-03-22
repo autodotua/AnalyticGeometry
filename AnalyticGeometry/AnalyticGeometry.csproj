@@ -70,6 +70,15 @@
     <Reference Include="CustomWPFColorPicker">
       <HintPath>CustomColorPicker\CustomWPFColorPicker\bin\Debug\CustomWPFColorPicker.dll</HintPath>
     </Reference>
+    <Reference Include="Expression.NetFramework">
+      <HintPath>Expression-master\Expression.NetFramework\bin\Release\Expression.NetFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="MathExpressions.NET">
+      <HintPath>KvanTTT-MathExpressions.NET\MathExpressions.NET\bin\Release\MathExpressions.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleExpressionEvaluator, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Math-Expression-Evaluator.1.1.0.0\lib\net40\SimpleExpressionEvaluator.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -91,6 +100,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MathExpression.cs" />
     <Compile Include="OrdinaryCalculator.xaml.cs">
       <DependentUpon>OrdinaryCalculator.xaml</DependentUpon>
     </Compile>
@@ -152,6 +162,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
