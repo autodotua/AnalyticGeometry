@@ -835,6 +835,10 @@ MathAssembly parametricYMathAssembly = new MathAssembly(parametricYExpression, t
                     rbtnGraphTypeOfLine.IsChecked = false;
                 }
             }
+            else
+            {
+                rbtnCalculateType2.IsChecked = true;
+            }
             //显示坐标系
             Initialize();
             // Draw();
@@ -1037,7 +1041,7 @@ MathAssembly parametricYMathAssembly = new MathAssembly(parametricYExpression, t
             else
             {
                 //如果界面高度足够就不需要滚轮来调节了了
-                if (this.ActualHeight >= 720)
+                if (this.ActualHeight >= 770)
                     return;
                 else
                 {
